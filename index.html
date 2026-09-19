@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Брейн-ринг: Границы слова и Запрещенные ресурсы</title>
+  <title>Флеш-карточки «Кейс-практика: Границы слова и Запрещенные ресурсы»</title>
   <style>
     :root {
       --bg-main: #0b1120;
@@ -1001,10 +1001,10 @@
     <div class="gavel-badge-logo">
       <svg><use href="#icon-gavel-legal"></use></svg>
     </div>
-    <h1 class="splash-title">БРЕЙН-РИНГ</h1>
+    <h1 class="splash-title">КЕЙС-ПРАКТИКА</h1>
     <div class="splash-badge">
       <span class="splash-badge-dot"></span>
-      <span>Границы слова • Судебная практика</span>
+      <span>Границы слова и Запрещенные ресурсы</span>
     </div>
     <p class="splash-rules">
       Незнание закона не спасает от штрафа. Перед тобой <span class="highlight-text">20 реальных судебных дел</span>.<br>
@@ -1901,9 +1901,9 @@
       ctx.fillText('СУДЕБНЫЙ ДИПЛОМ КВАЛИФИЦИРОВАННОГО ЭКСПЕРТА', width / 2, 270);
 
       ctx.fillStyle = '#f8fafc';
-      ctx.font = '900 42px system-ui, sans-serif';
-      ctx.fillText('БРЕЙН-РИНГ: ГРАНИЦЫ СЛОВА', width / 2, 330);
-      ctx.fillText('И СУДЕБНАЯ ПРАКТИКА', width / 2, 382);
+      ctx.font = '900 40px system-ui, sans-serif';
+      ctx.fillText('КЕЙС-ПРАКТИКА: ГРАНИЦЫ СЛОВА', width / 2, 330);
+      ctx.fillText('И ЗАПРЕЩЕННЫЕ РЕСУРСЫ', width / 2, 382);
 
       ctx.fillStyle = '#94a3b8';
       ctx.font = '600 20px system-ui, sans-serif';
@@ -1983,7 +1983,7 @@
       ctx.fillText('Формат 3:4 • Автономный тренажер Skillspace LMS', width / 2, 1260);
 
       const link = document.createElement('a');
-      link.download = `Диплом_Брейн_Ринг_Эксперт_${formatTime(elapsedSeconds).replace(':', '-')}.png`;
+      link.download = `Диплом_Кейс_Практика_Эксперт_${formatTime(elapsedSeconds).replace(':', '-')}.png`;
       link.href = canvas.toDataURL('image/png');
       document.body.appendChild(link);
       link.click();
