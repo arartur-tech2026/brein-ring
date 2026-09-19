@@ -3,508 +3,1246 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Матрица данных: Биометрия и Право на забвение</title>
+  <title>Брейн-ринг: Границы слова и Запрещенные ресурсы</title>
   <style>
     :root {
-      --bg-main: #060b14;
-      --bg-surface: #0f172a;
-      --bg-card: #172339;
-      --border-color: #1e293b;
-      --border-accent: #0284c7;
-
+      --bg-main: #0b1120;
+      --bg-surface: #131d31;
+      --bg-card-front: #162238;
+      --bg-card-back: #261219;
+      --border-color: rgba(59, 130, 246, 0.25);
+      
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
+      --text-dim: #64748b;
 
-      --alert-red: #ef4444;
-      --alert-bg: rgba(239, 68, 68, 0.15);
+      --blue-accent: #3b82f6;
+      --blue-glow: rgba(59, 130, 246, 0.35);
+      --cyan-highlight: #38bdf8;
+      
+      --verdict-crimson: #f87171;
+      --verdict-glow: rgba(239, 68, 68, 0.35);
 
-      --safe-green: #10b981;
-      --safe-bg: rgba(16, 185, 129, 0.15);
+      --success-green: #10b981;
+      --success-bg: rgba(16, 185, 129, 0.16);
+      --success-glow: rgba(16, 185, 129, 0.4);
 
-      --cyber-cyan: #0ea5e9;
-      --cyber-cyan-glow: rgba(14, 165, 233, 0.35);
+      --amber-warn: #f59e0b;
+      --amber-bg: rgba(245, 158, 11, 0.16);
+      --amber-glow: rgba(245, 158, 11, 0.4);
 
-      --shadow-bubble: 0 12px 30px -10px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.05);
-      --radius-lg: 20px;
+      --bg-left: rgba(245, 158, 11, 0.06);
+      --bg-right: rgba(16, 185, 129, 0.06);
+
+      --shadow-card: 0 20px 40px -10px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.08);
+      --radius-lg: 22px;
       --radius-md: 14px;
       --radius-sm: 8px;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
 
     html, body {
       font-family: system-ui, -apple-system, sans-serif;
-      position: fixed; inset: 0; width: 100%; height: 100dvh;
-      overflow: hidden; overscroll-behavior: none;
-      background-color: var(--bg-main); color: var(--text-main);
-      touch-action: none; display: flex; flex-direction: column;
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      height: 100dvh;
+      overflow: hidden;
+      overscroll-behavior: none;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      touch-action: none;
+      display: flex;
+      flex-direction: column;
     }
 
-    .cyber-grid {
-      position: absolute; inset: 0;
+    .cyber-bg {
+      position: absolute;
+      inset: 0;
       background-image: 
-        radial-gradient(circle at 15% 50%, rgba(14, 165, 233, 0.08) 0%, transparent 50%),
-        radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.05) 0%, transparent 50%),
-        linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
-      background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
-      z-index: 1; pointer-events: none;
+        radial-gradient(circle at 50% 12%, rgba(59, 130, 246, 0.14) 0%, transparent 60%),
+        radial-gradient(circle at 85% 85%, rgba(239, 68, 68, 0.08) 0%, transparent 55%),
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+      z-index: 1;
+      pointer-events: none;
     }
 
-    /* SPLASH SCREEN */
     .splash-screen {
-      position: fixed; inset: 0; background: radial-gradient(circle at center, #0f172a 0%, #060b14 100%);
-      display: flex; flex-direction: column; justify-content: center; align-items: center;
-      z-index: 9999; padding: 1.5rem; text-align: center; transition: opacity 0.4s ease, visibility 0.4s ease;
-      overflow-y: auto;
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at center, #172554 0%, #0b1120 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      padding: 1.5rem;
+      text-align: center;
+      overflow: hidden;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
     }
-    .splash-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 
-    .scanner-badge {
-      width: 86px; height: 86px; border-radius: 50%; background: rgba(14, 165, 233, 0.1);
-      border: 2px solid var(--cyber-cyan); display: flex; align-items: center; justify-content: center;
-      margin-bottom: 1.5rem; box-shadow: 0 0 35px var(--cyber-cyan-glow); animation: pulseScanner 2s infinite ease-in-out;
-      flex-shrink: 0;
+    .splash-screen.hidden {
+      opacity: 0;
+      visibility: hidden;
     }
-    .scanner-badge svg { width: 40px; height: 40px; stroke: var(--cyber-cyan); fill: none; }
-    @keyframes pulseScanner { 0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(14, 165, 233, 0.2); } 50% { transform: scale(1.05); box-shadow: 0 0 40px rgba(14, 165, 233, 0.5); } }
+
+    .gavel-badge-logo {
+      width: 84px;
+      height: 84px;
+      border-radius: 50%;
+      background: rgba(59, 130, 246, 0.15);
+      border: 2px solid var(--blue-accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.4rem;
+      box-shadow: 0 0 35px var(--blue-glow);
+      animation: pulseGavel 2.5s infinite ease-in-out;
+    }
+
+    .gavel-badge-logo svg {
+      width: 42px;
+      height: 42px;
+      fill: var(--blue-accent);
+    }
+
+    @keyframes pulseGavel {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 25px rgba(59, 130, 246, 0.35); }
+      50% { transform: scale(1.06); box-shadow: 0 0 45px rgba(59, 130, 246, 0.65); }
+    }
 
     .splash-title {
-      font-size: clamp(1.8rem, 7.5vw, 2.8rem); font-weight: 900; letter-spacing: 1px;
-      margin-bottom: 0.5rem; background: linear-gradient(135deg, #f8fafc 0%, #38bdf8 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    }
-    .splash-tag {
-      display: inline-flex; align-items: center; gap: 6px; padding: 5px 14px; border-radius: 99px;
-      background: var(--safe-bg); border: 1px solid rgba(16, 185, 129, 0.4);
-      color: #6ee7b7; font-size: 0.8rem; font-weight: 800; letter-spacing: 0.8px; margin-bottom: 1.4rem; text-transform: uppercase;
+      font-size: clamp(1.85rem, 7.5vw, 3rem);
+      font-weight: 900;
+      letter-spacing: 1px;
+      line-height: 1.15;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #f8fafc 0%, #60a5fa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
-    .splash-instruction {
-      font-size: clamp(0.92rem, 3.2vw, 1.05rem); color: var(--text-muted); max-width: 480px; line-height: 1.6; margin-bottom: 2.2rem;
+    .splash-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      border-radius: 99px;
+      background: rgba(59, 130, 246, 0.18);
+      border: 1px solid rgba(59, 130, 246, 0.45);
+      color: #93c5fd;
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      margin-bottom: 1.4rem;
+      text-transform: uppercase;
     }
-    .splash-instruction strong { color: #f8fafc; }
-    .splash-instruction .penalty-word { color: var(--alert-red); font-weight: 800; }
 
-    .btn-start {
-      background: linear-gradient(135deg, #0284c7, #2563eb); color: #ffffff; border: none;
-      padding: 1rem 3.4rem; border-radius: 99px; font-size: 1.05rem; font-weight: 800; letter-spacing: 0.6px;
-      cursor: pointer; box-shadow: 0 4px 25px rgba(2, 132, 199, 0.45); transition: transform 0.2s;
+    .splash-badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--blue-accent);
+      box-shadow: 0 0 8px var(--blue-accent);
     }
-    .btn-start:active { transform: scale(0.95); }
 
-    /* APP CONTAINER */
+    .splash-rules {
+      font-size: clamp(0.92rem, 3.2vw, 1.06rem);
+      color: var(--text-muted);
+      max-width: 510px;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    .splash-rules strong { color: #f8fafc; }
+    .splash-rules .highlight-text { color: var(--cyan-highlight); font-weight: 700; }
+    .splash-rules .accent-learned { color: #34d399; font-weight: 800; }
+    .splash-rules .accent-repeat { color: #fbbf24; font-weight: 800; }
+
+    .btn-start-ring {
+      background: linear-gradient(135deg, var(--blue-accent), #1d4ed8);
+      color: #ffffff;
+      border: none;
+      padding: 1rem 3.4rem;
+      border-radius: 99px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: 0.6px;
+      cursor: pointer;
+      box-shadow: 0 4px 25px rgba(59, 130, 246, 0.5);
+      animation: pulseStartBtn 2s infinite;
+      transition: transform 0.2s;
+    }
+
+    .btn-start-ring:active { transform: scale(0.95); }
+
+    @keyframes pulseStartBtn {
+      0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.6); }
+      70% { box-shadow: 0 0 0 16px rgba(59, 130, 246, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+    }
+
     .app-container {
-      position: relative; z-index: 10; display: flex; flex-direction: column;
-      height: 100%; width: 100%; max-width: 760px; margin: 0 auto;
-      opacity: 0; visibility: hidden; transition: opacity 0.4s ease;
-    }
-    .app-container.visible { opacity: 1; visibility: visible; }
-    .app-container.shake { animation: appShake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both; }
-    @keyframes appShake { 10%, 90% { transform: translate3d(-3px, 0, 0); } 20%, 80% { transform: translate3d(5px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-6px, 0, 0); } 40%, 60% { transform: translate3d(6px, 0, 0); } }
-
-    /* HEADER */
-    .header-bar {
-      flex-shrink: 0; display: flex; justify-content: space-between; align-items: flex-end;
-      padding: max(12px, env(safe-area-inset-top)) 16px 12px; border-bottom: 1px solid var(--border-color); background: var(--bg-surface);
-    }
-    .header-left { display: flex; flex-direction: column; gap: 4px; }
-    .case-count-tag { font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
-    .case-title { font-size: 1.15rem; font-weight: 900; color: #f8fafc; display: flex; align-items: center; gap: 8px; }
-
-    .header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
-    .timer-badge {
-      position: relative; display: flex; align-items: center; gap: 6px;
-      background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-color);
-      padding: 4px 10px; border-radius: 99px; font-size: 0.85rem; font-weight: 700; font-variant-numeric: tabular-nums; color: #38bdf8;
-    }
-    .timer-badge svg { width: 14px; height: 14px; stroke: currentColor; fill: none; }
-    .penalty-flash {
-      position: absolute; top: 100%; right: 0; color: var(--alert-red); font-size: 0.8rem; font-weight: 900;
-      opacity: 0; pointer-events: none; transition: all 0.3s ease;
-    }
-    .penalty-flash.show { opacity: 1; transform: translateY(4px); }
-
-    .lives-indicator { display: flex; gap: 4px; }
-    .life-shield { width: 18px; height: 18px; fill: var(--cyber-cyan); transition: all 0.3s ease; }
-    .life-shield.lost { fill: #334155; transform: scale(0.8); opacity: 0.5; }
-
-    .btn-icon {
-      background: rgba(15, 23, 42, 0.7); border: 1px solid var(--border-color);
-      color: #38bdf8; width: 30px; height: 30px; border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; transition: all 0.2s; flex-shrink: 0;
-    }
-    .btn-icon:hover { border-color: var(--cyber-cyan); background: rgba(14, 165, 233, 0.15); }
-    .btn-icon:active { transform: scale(0.92); }
-    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
-
-    /* FILTERS */
-    .filters-scroll {
-      flex-shrink: 0; width: 100%; overflow-x: auto; scrollbar-width: none; background: var(--bg-surface);
-      padding: 0 16px 12px; display: flex; gap: 8px; border-bottom: 1px solid var(--border-color); touch-action: pan-x;
-    }
-    .filters-scroll::-webkit-scrollbar { display: none; }
-    .filter-btn {
-      flex-shrink: 0; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-muted);
-      padding: 6px 14px; border-radius: 99px; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: all 0.2s;
-    }
-    .filter-btn.active { background: rgba(14, 165, 233, 0.15); border-color: var(--cyber-cyan); color: var(--cyber-cyan); }
-
-    /* DASHBOARD GRID */
-    .dashboard-grid {
-      flex: 1; padding: 16px; overflow-y: auto; overscroll-behavior: contain;
-      display: flex; flex-direction: column; gap: 12px;
-    }
-    .dashboard-grid::-webkit-scrollbar { display: none; }
-
-    .incident-card {
-      background: var(--bg-card); border: 1px solid var(--border-color); border-left: 4px solid var(--alert-red);
-      border-radius: 12px; padding: 16px; cursor: pointer; transition: all 0.2s; box-shadow: var(--shadow-bubble);
-      display: flex; flex-direction: column; gap: 8px;
-    }
-    .incident-card:active { transform: scale(0.98); }
-    .incident-card.resolved {
-      border-left-color: var(--safe-green); opacity: 0.65; cursor: default;
-    }
-    .incident-card.resolved:active { transform: none; }
-
-    .inc-header { display: flex; justify-content: space-between; align-items: flex-start; }
-    .inc-status { font-size: 0.7rem; font-weight: 900; letter-spacing: 0.05em; color: var(--alert-red); display: flex; align-items: center; gap: 4px; }
-    .inc-status.resolved { color: var(--safe-green); }
-    .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; animation: blinkDot 1s infinite alternate; }
-    .inc-category { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; background: #0f172a; padding: 2px 8px; border-radius: 4px; }
-
-    .inc-title { font-size: 0.95rem; font-weight: 600; line-height: 1.4; color: #e2e8f0; }
-
-    /* MODAL INCIDENT */
-    .modal-overlay {
-      position: fixed; inset: 0; background: rgba(6, 11, 20, 0.9); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-      z-index: 99999; display: flex; justify-content: center; align-items: center; padding: 16px;
-      opacity: 0; visibility: hidden; transition: all 0.25s ease;
-    }
-    .modal-overlay.visible { opacity: 1; visibility: visible; }
-
-    .dialog-box {
-      width: 100%; max-width: 520px; background: var(--bg-surface); border: 1px solid var(--border-color);
-      border-radius: 20px; display: flex; flex-direction: column;
-      transform: scale(0.95) translateY(10px); transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      max-height: 90vh; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
-    }
-    .modal-overlay.visible .dialog-box { transform: scale(1) translateY(0); }
-
-    .dialog-header {
-      padding: 16px 20px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 10px;
-    }
-    .dialog-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: var(--alert-bg); }
-    .dialog-icon svg { width: 18px; height: 18px; fill: var(--alert-red); }
-    .dialog-icon.success { background: var(--safe-bg); }
-    .dialog-icon.success svg { fill: var(--safe-green); }
-
-    .dialog-title { font-size: 1.1rem; font-weight: 800; color: #f8fafc; }
-    .dialog-subtitle { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
-
-    .dialog-body { padding: 20px; overflow-y: auto; overscroll-behavior: contain; }
-    .dialog-body::-webkit-scrollbar { display: none; }
-
-    .threat-desc {
-      font-size: 1.05rem; line-height: 1.5; color: #e2e8f0; font-weight: 500; margin-bottom: 24px;
-      background: var(--bg-card); padding: 16px; border-radius: 12px; border-left: 3px solid var(--alert-red);
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.35s ease;
+      overflow: hidden;
     }
 
-    .actions-list { display: flex; flex-direction: column; gap: 10px; }
-    .action-btn {
-      background: var(--bg-card); border: 1px solid var(--border-color); color: #cbd5e1;
-      padding: 14px 16px; border-radius: 12px; font-size: 0.95rem; font-weight: 600; line-height: 1.4;
-      text-align: left; cursor: pointer; transition: all 0.2s; display: flex; gap: 12px; align-items: center;
+    .app-container.visible {
+      opacity: 1;
+      visibility: visible;
     }
-    .action-btn:active { transform: scale(0.98); background: #1e293b; }
-    .action-btn .check-ring {
-      width: 20px; height: 20px; border-radius: 50%; border: 2px solid #475569; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
+
+    .header-hud {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      padding: max(8px, env(safe-area-inset-top)) 14px 6px;
+      gap: 6px;
+      z-index: 20;
     }
-    .action-btn .check-ring svg { width: 12px; height: 12px; fill: transparent; transition: fill 0.2s; }
 
-    .action-btn.correct { background: var(--safe-bg); border-color: var(--safe-green); color: #f8fafc; }
-    .action-btn.correct .check-ring { border-color: var(--safe-green); background: var(--safe-green); }
-    .action-btn.correct .check-ring svg { fill: #fff; }
-
-    .action-btn.wrong { background: var(--alert-bg); border-color: var(--alert-red); color: #fca5a5; animation: chunkShake 0.4s; }
-    .action-btn.wrong .check-ring { border-color: var(--alert-red); }
-
-    @keyframes chunkShake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
-
-    .feedback-panel {
-      margin-top: 20px; background: rgba(15, 23, 42, 0.8); border: 1px solid var(--border-color);
-      border-radius: 12px; padding: 16px; font-size: 0.92rem; line-height: 1.5; color: #cbd5e1; display: none;
+    .hud-row-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      gap: 8px;
     }
-    .feedback-panel.visible { display: block; animation: fadeIn 0.4s ease; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    .feedback-panel strong { color: var(--cyber-cyan); }
 
-    .dialog-footer { padding: 16px 20px; border-top: 1px solid var(--border-color); display: none; }
-    .dialog-footer.visible { display: flex; }
-
-    .btn-primary {
-      width: 100%; background: linear-gradient(135deg, var(--cyber-cyan), #2563eb); color: #fff;
-      border: none; padding: 14px; border-radius: 12px; font-size: 1rem; font-weight: 800; cursor: pointer;
-      box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3); transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px;
+    .hud-tag {
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--cyan-highlight);
+      white-space: nowrap;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.28);
+      padding: 4px 10px;
+      border-radius: 99px;
+      flex-shrink: 0;
     }
-    .btn-primary:active { transform: scale(0.97); }
 
-    /* FINISH & GAMEOVER DIALOGS */
-    .status-dialog { text-align: center; padding: 30px 20px; }
-    .status-icon {
-      width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 20px;
+    .hud-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
     }
-    .status-icon.success { background: var(--safe-bg); border: 2px solid var(--safe-green); box-shadow: 0 0 30px rgba(16, 185, 129, 0.3); }
-    .status-icon.success svg { width: 40px; height: 40px; fill: var(--safe-green); }
-    .status-icon.error { background: var(--alert-bg); border: 2px solid var(--alert-red); box-shadow: 0 0 30px rgba(239, 68, 68, 0.3); }
-    .status-icon.error svg { width: 40px; height: 40px; fill: var(--alert-red); }
 
-    .status-title { font-size: 1.5rem; font-weight: 900; margin-bottom: 8px; color: #f8fafc; }
-    .status-desc { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 24px; line-height: 1.5; }
-
-    .stats-table {
-      background: rgba(11, 17, 32, 0.6); border: 1px solid var(--border-color); border-radius: 12px;
-      padding: 12px 16px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; text-align: left;
+    .timer-pill {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(30, 41, 59, 0.85);
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      padding: 4px 10px;
+      border-radius: 99px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: #60a5fa;
     }
-    .stats-item { display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; }
-    .stats-item .label { color: var(--text-muted); font-weight: 600; }
-    .stats-item .val { color: #f8fafc; font-weight: 800; font-variant-numeric: tabular-nums; }
-    .stats-item .val.highlight { color: var(--cyber-cyan); font-size: 1.05rem; }
 
-    .btn-download {
-      width: 100%; background: linear-gradient(135deg, var(--safe-green), #059669); color: #fff;
-      border: none; padding: 14px; border-radius: 12px; font-size: 0.95rem; font-weight: 800; cursor: pointer;
-      display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); margin-bottom: 12px;
+    .timer-pill svg {
+      width: 14px;
+      height: 14px;
+      stroke: currentColor;
+      fill: none;
     }
-    .btn-download svg { width: 20px; height: 20px; fill: currentColor; }
-    .btn-download:active { transform: scale(0.97); }
 
-    .btn-ghost {
-      width: 100%; background: transparent; border: 1px solid var(--border-color); color: #cbd5e1;
-      padding: 12px; border-radius: 12px; font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: background 0.2s;
+    .btn-fs-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(30, 41, 59, 0.85);
+      border: 1px solid var(--border-color);
+      padding: 6px;
+      border-radius: 99px;
+      color: #cbd5e1;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      outline: none;
     }
-    .btn-ghost:active { background: rgba(255, 255, 255, 0.05); }
+
+    .btn-fs-toggle:hover {
+      border-color: var(--blue-accent);
+      color: var(--blue-accent);
+    }
+
+    .btn-fs-toggle svg {
+      width: 15px;
+      height: 15px;
+      stroke: currentColor;
+      fill: none;
+    }
+
+    .hud-row-progress {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      gap: 8px;
+    }
+
+    .learned-counter-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #34d399;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 3px 10px;
+      border-radius: 99px;
+    }
+
+    .deck-remains-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .arena-board {
+      flex: 1;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 6px 14px 10px;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .bg-split {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .bg-half {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 0.2s ease;
+    }
+
+    .bg-left { background-color: var(--bg-left); }
+    .bg-right { background-color: var(--bg-right); }
+
+    .bg-label {
+      font-size: clamp(2rem, 7vw, 3.2rem);
+      font-weight: 900;
+      opacity: 0.16;
+      letter-spacing: 2px;
+    }
+
+    .bg-left .bg-label { color: var(--amber-warn); }
+    .bg-right .bg-label { color: var(--success-green); }
+
+    .bg-sublabel {
+      font-size: clamp(0.75rem, 2.3vw, 0.95rem);
+      font-weight: 800;
+      text-transform: uppercase;
+      opacity: 0.22;
+      margin-top: 6px;
+      letter-spacing: 1px;
+    }
+
+    .bg-left .bg-sublabel { color: var(--amber-warn); }
+    .bg-right .bg-sublabel { color: var(--success-green); }
+
+    .card-area {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      z-index: 10;
+      padding: 8px;
+      min-height: 0;
+      width: 100%;
+    }
+
+    /* THE CARD WRAPPER - handles 2D swipe displacement and perspective */
+    .card-wrapper {
+      position: relative;
+      width: 88vw;
+      max-width: 420px;
+      height: 58vh;
+      max-height: 480px;
+      min-height: 330px;
+      perspective: 1200px;
+      cursor: grab;
+      touch-action: pan-y;
+      will-change: transform;
+    }
+
+    .card-wrapper:active {
+      cursor: grabbing;
+    }
+
+    .card-wrapper.wobble-locked {
+      animation: lockedWobble 0.4s ease;
+    }
+
+    @keyframes lockedWobble {
+      0%, 100% { transform: rotate(0deg); }
+      20%, 60% { transform: rotate(-3deg); }
+      40%, 80% { transform: rotate(3deg); }
+    }
+
+    /* THE CARD INNER - handles the 3D Y-axis flip */
+    .card-inner {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transform-style: preserve-3d;
+      box-shadow: var(--shadow-card);
+      border-radius: var(--radius-lg);
+    }
+
+    .card-wrapper.flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+
+    /* CARD FACES */
+    .card-face {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: var(--radius-lg);
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      padding: 18px 16px 14px;
+      overflow: hidden;
+      border: 1.5px solid var(--border-color);
+    }
+
+    .card-front {
+      background: radial-gradient(circle at 50% 10%, #1e2c45 0%, var(--bg-card-front) 100%);
+      border-color: rgba(59, 130, 246, 0.4);
+    }
+
+    .card-back {
+      background: radial-gradient(circle at 50% 10%, #3b1822 0%, var(--bg-card-back) 100%);
+      transform: rotateY(180deg);
+      border-color: rgba(239, 68, 68, 0.5);
+    }
+
+    .card-header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      flex-shrink: 0;
+      margin-bottom: 10px;
+    }
+
+    .side-tag {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.74rem;
+      font-weight: 900;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+
+    .card-front .side-tag { color: var(--cyan-highlight); }
+    .card-back .side-tag { color: var(--verdict-crimson); }
+
+    .side-tag svg {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+    }
+
+    .side-step-indicator {
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: var(--text-dim);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 2px 8px;
+      border-radius: 99px;
+    }
+
+    .card-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      scrollbar-width: none;
+      pointer-events: auto;
+      padding: 2px 4px;
+    }
+
+    .card-content::-webkit-scrollbar { display: none; }
+
+    .card-text {
+      width: 100%;
+      font-weight: 700;
+      line-height: 1.48;
+      word-break: normal;
+      overflow-wrap: break-word;
+      hyphens: none;
+      color: #f1f5f9;
+    }
+
+    .card-back .card-text {
+      color: #ffe4e6;
+      font-weight: 600;
+    }
+
+    .card-title-heading {
+      display: block;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #ffffff;
+      margin-bottom: 8px;
+      line-height: 1.35;
+    }
+
+    .card-desc-text {
+      display: block;
+      font-weight: 600;
+      line-height: 1.48;
+      color: #f1f5f9;
+    }
+
+    .article-highlight-wrap {
+      display: block;
+      width: 100%;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .article-highlight {
+      color: #f87171;
+      font-weight: 900;
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid rgba(239, 68, 68, 0.45);
+      padding: 3px 10px;
+      border-radius: 8px;
+      display: inline-block;
+    }
+
+    .verdict-desc-text {
+      display: block;
+      color: #ffe4e6;
+      font-weight: 600;
+      line-height: 1.48;
+    }
+
+    .card-footer-bar {
+      flex-shrink: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .card-footer-bar svg {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+    }
+
+    .badge-stamp {
+      position: absolute;
+      top: 18px;
+      padding: 6px 14px;
+      border-radius: 10px;
+      font-size: 1.12rem;
+      font-weight: 900;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      border: 3.5px solid;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 30;
+      transition: opacity 0.1s ease;
+    }
+
+    .badge-learned {
+      left: 18px;
+      color: var(--success-green);
+      border-color: var(--success-green);
+      background: var(--success-bg);
+      box-shadow: 0 0 16px var(--success-glow);
+      transform: rotate(-14deg);
+    }
+
+    .badge-repeat {
+      right: 18px;
+      color: var(--amber-warn);
+      border-color: var(--amber-warn);
+      background: var(--amber-bg);
+      box-shadow: 0 0 16px var(--amber-glow);
+      transform: rotate(14deg);
+    }
+
+    .action-bottom-bar {
+      flex-shrink: 0;
+      padding: 8px 14px max(14px, env(safe-area-inset-bottom));
+      background: rgba(11, 17, 32, 0.92);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 25;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1.6rem;
+      width: 100%;
+    }
+
+    .btn-action-round {
+      border-radius: 50%;
+      border: 2px solid;
+      background: var(--bg-surface);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+      transition: all 0.22s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      outline: none;
+    }
+
+    .btn-action-round:active {
+      transform: scale(0.9);
+    }
+
+    .btn-repeat-choice {
+      width: 64px;
+      height: 64px;
+      border-color: rgba(245, 158, 11, 0.45);
+      color: var(--amber-warn);
+    }
+
+    .btn-repeat-choice:hover {
+      background: var(--amber-warn);
+      color: #0b1120;
+      box-shadow: 0 0 25px var(--amber-glow);
+    }
+
+    .btn-flip-choice {
+      width: 50px;
+      height: 50px;
+      border-color: rgba(59, 130, 246, 0.45);
+      color: var(--blue-accent);
+    }
+
+    .btn-flip-choice:hover {
+      background: var(--blue-accent);
+      color: #ffffff;
+      box-shadow: 0 0 22px var(--blue-glow);
+    }
+
+    .btn-learned-choice {
+      width: 64px;
+      height: 64px;
+      border-color: rgba(16, 185, 129, 0.45);
+      color: var(--success-green);
+    }
+
+    .btn-learned-choice:hover {
+      background: var(--success-green);
+      color: #ffffff;
+      box-shadow: 0 0 25px var(--success-glow);
+    }
+
+    .btn-action-round svg {
+      width: 24px;
+      height: 24px;
+      fill: currentColor;
+    }
+
+    .btn-action-label {
+      font-size: 0.62rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .btn-action-round.disabled-swipe-lock {
+      opacity: 0.42;
+      filter: grayscale(0.5);
+    }
+
+    .locked-toast {
+      position: fixed;
+      bottom: 95px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(24, 18, 54, 0.96);
+      border: 1.5px solid #a855f7;
+      color: #f5f3ff;
+      padding: 8px 16px;
+      border-radius: 99px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(168, 85, 247, 0.45);
+      z-index: 999;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .locked-toast.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .empty-state {
+      text-align: center;
+      color: var(--text-muted);
+      display: none;
+      z-index: 5;
+      padding: 20px;
+      max-width: 320px;
+    }
+
+    .empty-state svg {
+      width: 60px;
+      height: 60px;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+      fill: currentColor;
+    }
+
+    .empty-state h2 {
+      font-size: 1.4rem;
+      margin-bottom: 0.5rem;
+      color: var(--text-main);
+    }
+
+    #text-measurer {
+      position: absolute;
+      left: -9999px;
+      visibility: hidden;
+      font-weight: 700;
+      line-height: 1.48;
+      word-break: normal;
+      overflow-wrap: break-word;
+      hyphens: none;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(11, 17, 32, 0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 99999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.28s ease;
+    }
+
+    .modal-backdrop.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .finish-card {
+      width: 100%;
+      max-width: 480px;
+      background: #172339;
+      border: 2px solid var(--success-green);
+      border-radius: 24px;
+      box-shadow: 0 0 50px rgba(16, 185, 129, 0.35);
+      padding: 24px 20px 20px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transform: scale(0.92);
+      transition: transform 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      max-height: 90vh;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      touch-action: pan-y;
+    }
+
+    .modal-backdrop.visible .finish-card {
+      transform: scale(1);
+    }
+
+    .finish-icon-badge {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: rgba(16, 185, 129, 0.15);
+      border: 2px solid var(--success-green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+      box-shadow: 0 0 25px var(--success-glow);
+    }
+
+    .finish-icon-badge svg {
+      width: 36px;
+      height: 36px;
+      fill: var(--success-green);
+    }
+
+    .finish-headline {
+      font-size: 1.4rem;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      color: #34d399;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+
+    .finish-sub-tag {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #cbd5e1;
+      margin-bottom: 16px;
+      padding: 3px 12px;
+      border-radius: 99px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .finish-summary-table {
+      width: 100%;
+      background: rgba(11, 17, 32, 0.7);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 18px;
+      text-align: left;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.88rem;
+    }
+
+    .summary-row .label {
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .summary-row .val {
+      color: #f8fafc;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .summary-row .val.highlight {
+      color: var(--cyan-highlight);
+      font-size: 1.05rem;
+    }
+
+    .btn-download-cert {
+      width: 100%;
+      background: linear-gradient(135deg, var(--blue-accent), #2563eb);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 13px 20px;
+      font-size: 0.98rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+      margin-bottom: 10px;
+      transition: all 0.2s;
+    }
+
+    .btn-download-cert:active { transform: scale(0.97); }
+
+    .btn-download-cert svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
+    .btn-restart-game {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #cbd5e1;
+      border-radius: 12px;
+      padding: 11px 16px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-restart-game:active {
+      background: rgba(255, 255, 255, 0.15);
+    }
   </style>
 </head>
 <body>
 
-  <div class="cyber-grid"></div>
+  <div class="cyber-bg"></div>
 
   <svg style="display: none;">
     <defs>
-      <symbol id="icon-shield" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></symbol>
-      <symbol id="icon-timer" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2.5 2.5"></path><path d="M10 2h4"></path></symbol>
-      <symbol id="icon-check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></symbol>
-      <symbol id="icon-hazard" viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></symbol>
-      <symbol id="icon-download" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/></symbol>
-      <symbol id="icon-fs-enter" viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></symbol>
-      <symbol id="icon-fs-exit" viewBox="0 0 24 24"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></symbol>
+      <symbol id="icon-gavel-legal" viewBox="0 0 24 24">
+        <path d="M5.2 3.8L3.8 5.2l4.2 4.2-1.4 1.4 4.2 4.2 1.4-1.4 4.2 4.2 1.4-1.4-4.2-4.2 1.4-1.4-4.2-4.2-1.4 1.4L5.2 3.8zM2 21h8v-2H2v2zm12-2v2h8v-2h-8z"/>
+      </symbol>
+      <symbol id="icon-timer" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="13" r="8"></circle>
+        <path d="M12 9v4l2.5 2.5"></path>
+        <path d="M10 2h4"></path>
+      </symbol>
+      <symbol id="icon-check" viewBox="0 0 24 24">
+        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+      </symbol>
+      <symbol id="icon-repeat" viewBox="0 0 24 24">
+        <path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v4l5-5-5-5v3z"/>
+      </symbol>
+      <symbol id="icon-flip" viewBox="0 0 24 24">
+        <path d="M19 8l-4 4h3c0 3.31-2.69 6-6 6-1.01 0-1.97-.25-2.8-.7l-1.46 1.46C8.97 19.54 10.43 20 12 20c4.42 0 8-3.58 8-8h3l-4-4zM6 12c0-3.31 2.69-6 6-6 1.01 0 1.97.25 2.8.7l1.46-1.46C15.03 4.46 13.57 4 12 4 7.58 4 4 7.58 4 12H1l4 4 4-4H6z"/>
+      </symbol>
+      <symbol id="icon-download" viewBox="0 0 24 24">
+        <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/>
+      </symbol>
+      <symbol id="icon-maximize" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+      </symbol>
+      <symbol id="icon-minimize" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path>
+      </symbol>
+      <symbol id="icon-lightning" viewBox="0 0 24 24">
+        <path d="M7 2v11h3v9l7-12h-4l4-8z"/>
+      </symbol>
+      <symbol id="icon-scales" viewBox="0 0 24 24">
+        <path d="M12 2a1 1 0 0 1 1 1v1.07A7.002 7.002 0 0 1 19 11v1a3 3 0 0 1-3 3h-.17A7.002 7.002 0 0 1 13 18.93V21h3a1 1 0 1 1 0 2H8a1 1 0 1 1 0-2h3v-2.07A7.002 7.002 0 0 1 8.17 15H8a3 3 0 0 1-3-3v-1a7.002 7.002 0 0 1 6-6.93V3a1 1 0 0 1 1-1zm-4 9a5 5 0 0 0 4 4.9 5 5 0 0 0 4-4.9v-1a5 5 0 0 0-8 0v1z"/>
+      </symbol>
+      <symbol id="icon-empty" viewBox="0 0 24 24">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+      </symbol>
     </defs>
   </svg>
 
-  <!-- SPLASH SCREEN -->
+  <div id="text-measurer"></div>
+
   <div id="splash" class="splash-screen">
-    <div class="scanner-badge"><svg><use href="#icon-shield"></use></svg></div>
-    <h1 class="splash-title">МАТРИЦА ДАННЫХ</h1>
-    <div class="splash-tag">Аудит Цифрового Профиля</div>
-    <p class="splash-instruction">
-      Ты – <strong>Data Privacy Officer</strong>. В твоем цифровом профиле обнаружены 10 критических уязвимостей ПДн и биометрии.<br><br>
-      Для каждой угрозы выбери <strong>1 ПРАВИЛЬНЫЙ</strong> юридический алгоритм защиты. Бытовые полумеры не работают!<br><br>
-      У тебя есть право на <span class="penalty-word">6 ошибок</span> (страйков). Ошибка = +30 секунд штрафа. Готов?
+    <div class="gavel-badge-logo">
+      <svg><use href="#icon-gavel-legal"></use></svg>
+    </div>
+    <h1 class="splash-title">БРЕЙН-РИНГ</h1>
+    <div class="splash-badge">
+      <span class="splash-badge-dot"></span>
+      <span>Границы слова • Судебная практика</span>
+    </div>
+    <p class="splash-rules">
+      Незнание закона не спасает от штрафа. Перед тобой <span class="highlight-text">20 реальных судебных дел</span>.<br>
+      Прочитай действие на карточке, мысленно дай ему правовую оценку.<br>
+      <strong>Тапни</strong>, чтобы перевернуть и узнать суровый вердикт суда.<br>
+      Смахни карточку <span class="accent-learned">ВПРАВО</span>, если запомнил норму.<br>
+      Смахни <span class="accent-repeat">ВЛЕВО</span>, если нужно повторить (карточка вернется в колоду).<br>
+      Готов к процессу?
     </p>
-    <button id="btn-start" class="btn-start">АКТИВИРОВАТЬ ТЕРМИНАЛ</button>
+    <button id="btn-start" class="btn-start-ring">НАЧАТЬ ПРОЦЕСС</button>
   </div>
 
-  <!-- APP DASHBOARD -->
   <div id="app" class="app-container">
-    <header class="header-bar">
-      <div class="header-left">
-        <span class="case-title">
-          <svg style="width:18px;height:18px;fill:var(--cyber-cyan);"><use href="#icon-shield"></use></svg>
-          РАДАР УТЕЧЕК
-        </span>
-        <span class="case-count-tag" id="progress-text">Зачищено угроз: 0/10</span>
-      </div>
-      <div class="header-right">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <button class="btn-icon" id="btn-fullscreen-toggle" title="Полноэкранный режим" aria-label="Полноэкранный режим">
-            <svg id="fs-icon"><use href="#icon-fs-enter"></use></svg>
-          </button>
-          <div class="timer-badge">
+    <header class="header-hud">
+      <div class="hud-row-top">
+        <span class="hud-tag">СУДЕБНЫЙ ПРЕЦЕДЕНТ</span>
+        <div class="hud-controls">
+          <div class="timer-pill" id="timer-box">
             <svg><use href="#icon-timer"></use></svg>
             <span id="timer-display">00:00</span>
-            <span class="penalty-flash" id="penalty-flash">+30с</span>
           </div>
+          <button class="btn-fs-toggle" id="btn-fullscreen" aria-label="Полноэкранный режим" title="На весь экран">
+            <svg><use id="icon-fs-use" href="#icon-maximize"></use></svg>
+          </button>
         </div>
-        <div class="lives-indicator" id="lives-container">
-          <svg class="life-shield"><use href="#icon-shield"></use></svg>
-          <svg class="life-shield"><use href="#icon-shield"></use></svg>
-          <svg class="life-shield"><use href="#icon-shield"></use></svg>
-          <svg class="life-shield"><use href="#icon-shield"></use></svg>
-          <svg class="life-shield"><use href="#icon-shield"></use></svg>
-          <svg class="life-shield"><use href="#icon-shield"></use></svg>
+      </div>
+      <div class="hud-row-progress">
+        <div class="learned-counter-badge">
+          <svg style="width:12px;height:12px;fill:currentColor;"><use href="#icon-check"></use></svg>
+          <span>УСВОЕНО: <strong id="hud-learned-count">0</strong> / 20</span>
         </div>
+        <span class="deck-remains-badge" id="hud-deck-remains">В колоде: 20 дел</span>
       </div>
     </header>
 
-    <div class="filters-scroll" id="filters-container">
-      <button class="filter-btn active" data-filter="Все">Все</button>
-      <button class="filter-btn" data-filter="БИОМЕТРИЯ">Биометрия</button>
-      <button class="filter-btn" data-filter="ПДН">ПДн и Согласия</button>
-      <button class="filter-btn" data-filter="УТЕЧКИ">Утечки и След</button>
-    </div>
-
-    <main class="dashboard-grid" id="grid-container"></main>
-  </div>
-
-  <!-- INCIDENT MODAL -->
-  <div id="modal-incident" class="modal-overlay">
-    <div class="dialog-box">
-      <div class="dialog-header">
-        <div class="dialog-icon" id="modal-icon"><svg><use href="#icon-hazard"></use></svg></div>
-        <div>
-          <div class="dialog-subtitle" id="modal-category">КАТЕГОРИЯ</div>
-          <div class="dialog-title" id="modal-title">АНАЛИЗ ИНЦИДЕНТА</div>
+    <main class="arena-board">
+      <div class="bg-split">
+        <div class="bg-half bg-left">
+          <div class="bg-label">ПОВТОР</div>
+          <div class="bg-sublabel">В конец колоды</div>
+        </div>
+        <div class="bg-half bg-right">
+          <div class="bg-label">УСВОИЛ</div>
+          <div class="bg-sublabel">Норма изучена</div>
         </div>
       </div>
-      <div class="dialog-body">
-        <div class="threat-desc" id="modal-threat"></div>
-        <div class="actions-list" id="modal-actions"></div>
-        <div class="feedback-panel" id="modal-feedback"></div>
-      </div>
-      <div class="dialog-footer" id="modal-footer">
-        <button class="btn-primary" id="btn-close-incident">СЛЕДУЮЩИЙ ИНЦИДЕНТ</button>
-      </div>
-    </div>
-  </div>
 
-  <!-- GAMEOVER MODAL -->
-  <div id="modal-gameover" class="modal-overlay">
-    <div class="dialog-box status-dialog">
-      <div class="status-icon error"><svg><use href="#icon-hazard"></use></svg></div>
-      <h2 class="status-title" style="color: #ef4444;">СИСТЕМА СКОМПРОМЕТИРОВАНА</h2>
-      <p class="status-desc">Допущено 6 критических ошибок. Ваши данные слиты в Даркнет. Полная перезагрузка системы.</p>
-      <button class="btn-primary" style="background: linear-gradient(135deg, #ef4444, #dc2626);" id="btn-retry-all">ВОЗВРАТ К НАЧАЛУ АУДИТА</button>
-    </div>
-  </div>
-
-  <!-- FINISH MODAL -->
-  <div id="modal-finish" class="modal-overlay">
-    <div class="dialog-box status-dialog">
-      <div class="status-icon success"><svg><use href="#icon-shield"></use></svg></div>
-      <h2 class="status-title" style="color: #34d399;">ПРОФИЛЬ ОЧИЩЕН НА 100%!</h2>
-      <p class="status-desc">Все уязвимости нейтрализованы согласно законам РФ.</p>
-
-      <div class="stats-table">
-        <div class="stats-item"><span class="label">⏱ Затраченное время:</span><span class="val highlight" id="stat-time">00:00</span></div>
-        <div class="stats-item"><span class="label">⚠️ Допущено ошибок:</span><span class="val" id="stat-mistakes">0</span></div>
-        <div class="stats-item"><span class="label">🔄 Перезапусков (провалов):</span><span class="val" id="stat-fails">0</span></div>
+      <div class="empty-state" id="empty-state">
+        <svg><use href="#icon-empty"></use></svg>
+        <h2>Все прецеденты изучены!</h2>
+        <p>Колода судебной практики успешно освоена.</p>
       </div>
 
-      <button class="btn-download" id="btn-download-cert">
-        <svg><use href="#icon-download"></use></svg> СКАЧАТЬ АКТ ЗАЩИТЫ ПРОФИЛЯ
+      <div class="card-area" id="card-area">
+        <!-- The active card is injected here -->
+      </div>
+    </main>
+
+    <footer class="action-bottom-bar" id="action-bottom-bar">
+      <button class="btn-action-round btn-repeat-choice disabled-swipe-lock" id="btn-action-repeat" aria-label="Повторить дело" title="Повторить (Свайп влево)">
+        <svg><use href="#icon-repeat"></use></svg>
+        <span class="btn-action-label">Повтор</span>
       </button>
-      <button class="btn-ghost" id="btn-restart-win">ПРОВЕСТИ ПОВТОРНЫЙ АУДИТ</button>
+
+      <button class="btn-action-round btn-flip-choice" id="btn-action-flip" aria-label="Перевернуть карточку" title="Перевернуть">
+        <svg><use href="#icon-flip"></use></svg>
+        <span class="btn-action-label">Вердикт</span>
+      </button>
+
+      <button class="btn-action-round btn-learned-choice disabled-swipe-lock" id="btn-action-learned" aria-label="Усвоил дело" title="Усвоил (Свайп вправо)">
+        <svg><use href="#icon-check"></use></svg>
+        <span class="btn-action-label">Усвоил</span>
+      </button>
+    </footer>
+  </div>
+
+  <div id="locked-toast" class="locked-toast">⚠️ СНАЧАЛА ПЕРЕВЕРНИТЕ КАРТОЧКУ И ИЗУЧИТЕ ВЕРДИКТ</div>
+
+  <div id="modal-finish" class="modal-backdrop" role="dialog" aria-modal="true">
+    <div class="finish-card">
+      <div class="finish-icon-badge">
+        <svg><use href="#icon-gavel-legal"></use></svg>
+      </div>
+      <h2 class="finish-headline">Судебная практика усвоена!</h2>
+      <div class="finish-sub-tag">Все 20 прецедентов квалифицированы безупречно</div>
+
+      <div class="finish-summary-table">
+        <div class="summary-row">
+          <span class="label">⏱ Затраченное время:</span>
+          <span class="val highlight" id="stat-final-time">00:00</span>
+        </div>
+        <div class="summary-row">
+          <span class="label">⚖️ Усвоено норм и прецедентов:</span>
+          <span class="val" id="stat-total-cases">20 из 20 (100%)</span>
+        </div>
+        <div class="summary-row">
+          <span class="label">🔄 Возвратов в колоду на повторение:</span>
+          <span class="val" id="stat-repeats-count">0</span>
+        </div>
+        <div class="summary-row">
+          <span class="label">🛡 Квалификационный статус:</span>
+          <span class="val" style="color: #34d399;">LEGAL EXPERT</span>
+        </div>
+      </div>
+
+      <button class="btn-download-cert" id="btn-download-cert">
+        <svg><use href="#icon-download"></use></svg>
+        СКАЧАТЬ ДИПЛОМ ЭКСПЕРТА (PNG 3:4)
+      </button>
+      <button class="btn-restart-game" id="btn-restart-all">ПРОЙТИ ТРЕНАЖЕР ЗАНОВО</button>
     </div>
   </div>
 
   <script>
-    const dbRaw = [
+    const rawDatabase = [
       {
-        id: 1, filterType: "БИОМЕТРИЯ", category: "БИОМЕТРИЯ В БИЗНЕСЕ",
-        threat: "Менеджер фитнес-клуба (или ВУЗа) отказывается выдать вам пропуск без обязательного сканирования лица, ссылаясь на строгие внутренние регламенты безопасности. Доступ на объект заблокирован.",
-        correct: "Потребовать пропуск-альтернативу, ссылаясь на штраф за принуждение к биометрии.",
-        distractors: ["Сдаться и пройти сканирование в медицинской маске и темных очках, чтобы обмануть камеру.", "Написать гневный отзыв в соцсетях и смириться с отказом в услуге."],
-        feedback: "ПРАВОВОЙ СТАТУС: По ФЗ-572 биометрия сдается ИСКЛЮЧИТЕЛЬНО добровольно. Отказ от нее не может быть причиной непредоставления услуги. Введение ч. 8 ст. 14.8 КоАП РФ позволяет штрафовать юрлиц на сумму до 500 тыс. руб. за отказ в обслуживании без биометрии. Альтернатива (паспорт/обычная карта) обязательна!"
+        "id": 1,
+        "action": "АЛГОРИТМИЧЕСКИЙ ЛАЙК: Нажал «Нравится» под видеороликом на YouTube, где спикер оправдывает вооруженное нападение на органы власти. Видео автоматически добавилось в публичный плейлист аккаунта.",
+        "verdict": "СТАТЬЯ 205.2 УК РФ. Лишение свободы до 5 лет. Суд признает лайк публичным заявлением. Алгоритмы платформы делают отмеченный контент доступным 3-м лицам, что образует состав «публичного оправдания терроризма»."
       },
       {
-        id: 2, filterType: "УТЕЧКИ", category: "ПРАВО НА ЗАБВЕНИЕ",
-        threat: "В поисковиках (Яндекс/Google) по вашему ФИО на первой странице выдается старая клевета с заброшенного форума или незаконный слив личных данных.",
-        correct: "Направить оператору поисковика официальное требование о деиндексации ссылок.",
-        distractors: ["Требовать удаления данных напрямую у хостинг-провайдера заброшенного сайта.", "Пытаться «заспамить» поиск покупкой позитивных фейковых статей о себе на биржах."],
-        feedback: "Ст. 10.3 ФЗ-149 («право на забвение») обязывает поисковики скрывать из выдачи незаконную или неактуальную информацию по ФИО гражданина. Контент на сайте останется, но найти его через поисковик будет невозможно. Поисковик обязан ответить за 10 рабочих дней."
+        "id": 2,
+        "action": "РЕПОСТ С ОДОБРЕНИЕМ: Скопировал на стену во «ВКонтакте» пост с призывами к насилию против определенной группы людей, добавив свой короткий комментарий: «Давно пора».",
+        "verdict": "СТАТЬЯ 280 УК РФ. Лишение свободы на 3 года. Репост с авторским одобрением квалифицируется как самостоятельный призыв к экстремистской деятельности. Сформирован прямой умысел на побуждение к насилию."
       },
       {
-        id: 3, filterType: "ПДН", category: "ИЛЛЮЗИЯ УДАЛЕНИЯ",
-        threat: "Вы удалили аккаунт в интернет-магазине одежды и снесли приложение с телефона, но рекламный спам на email и навязчивые звонки не прекращаются.",
-        correct: "Направить официальный письменный отзыв согласия на обработку ПДн и рекламу оператору.",
-        distractors: ["Вручную блокировать каждый новый номер и email в черном списке телефона.", "Надеяться, что удаление приложения автоматически сотрет базу на сервере со временем."],
-        feedback: "Удаление приложения НЕ стирает ПДн с серверов! Без прямого письменного отзыва согласия (ч. 5 ст. 21 ФЗ-152) компания продолжит обработку. Спам без явного согласия нарушает ст. 18 ФЗ-38, за что ФАС России штрафует компании на суммы до 1 млн руб."
+        "id": 3,
+        "action": "КЛЕВЕТА В ЧАТЕ: В «закрытом» рабочем чате отдела в Telegram (на 45 человек) безосновательно написал, что начальник финансового департамента регулярно берет откаты.",
+        "verdict": "СТАТЬЯ 128.1 УК РФ. Штраф 500 000 руб. Групповые мессенджеры приравнены к публичным сетям. Распространение заведомо ложных сведений без приговора суда квалифицируется как уголовная клевета."
       },
       {
-        id: 4, filterType: "ПДН", category: "ФИНАНСОВАЯ ЛОВУШКА",
-        threat: "Вы закрыли кредитную карту и жестко требуете у банка удалить всю историю операций и скан паспорта по ст. 21 ФЗ-152. Банк отказывает.",
-        correct: "Принять отказ в удалении досье, но направить точечный отзыв согласия на использование данных в маркетинге.",
-        distractors: ["Написать жалобу в Роскомнадзор на банк за незаконное удержание ПДн.", "Угрожать банку судом и прокуратурой за нарушение закона о персональных данных."],
-        feedback: "Банк законно откажет в уничтожении досье: по ст. 7 ФЗ-115 (антиотмывочный закон) банк ОБЯЗАН хранить досье клиента 5 лет ПОСЛЕ расторжения договора. Эта специальная норма блокирует удаление по ФЗ-152. Однако вы вправе запретить любые рекламные звонки и рассылки."
+        "id": 4,
+        "action": "ОСКОРБЛЕНИЕ РОДИТЕЛЕЙ: Родитель в ходе конфликта в WhatsApp-чате родительского комитета (30 участников) назвал другого родителя нецензурным словом.",
+        "verdict": "СТАТЬЯ 5.61 КоАП РФ. Штраф 5 000 руб. Чат признан публичным местом. Наличие в беседе других участников обеспечивает критерий «публичности». Действие квалифицировано как унижение чести и достоинства."
       },
       {
-        id: 5, filterType: "УТЕЧКИ", category: "УТЕЧКА БАЗ ДАННЫХ",
-        threat: "Популярный сервис доставки еды допустил мощную утечку БД. Теперь ваш телефон и точный адрес продаются в Telegram-ботах для «пробива» людей.",
-        correct: "Зафиксировать слив, написать жалобу в РКН для блокировки бота и подать иск о компенсации морального вреда.",
-        distractors: ["Добиваться промокода на скидку 500 рублей от техподдержки сервиса доставки.", "Игнорировать проблему, считая, что «все данные уже давно слиты в интернет»."],
-        feedback: "Штрафы за утечки стали оборотными (ст. 13.11 КоАП РФ). По ст. 151 ГК РФ вы вправе взыскать компенсацию морального вреда. А деятельность ботов «пробива» незаконна — Роскомнадзор оперативно блокирует такие ресурсы по мотивированным обращениям граждан."
+        "id": 5,
+        "action": "ДЛЯЩЕЕСЯ ПРАВОНАРУШЕНИЕ: В 2013 году загрузил в закрытый альбом VK плакат с рунами, схожими с нацистскими. Страницу забросил 10 лет назад, пароль не помнит. Полиция нашла фото сегодня.",
+        "verdict": "СТАТЬЯ 20.3 КоАП РФ. Арест 5 суток и конфискация смартфона. Правонарушение является длящимся. Срок давности идет с момента обнаружения полицией. Наказуем факт доступности картинки сегодня, а не факт её загрузки в прошлом."
       },
       {
-        id: 6, filterType: "ПДН", category: "ИЗБЫТОЧНЫЙ СБОР ПДн",
-        threat: "Бесплатное приложение-фонарик (или простая оффлайн-игра) требует при установке предоставить доступ к микрофону, контактам и галерее смартфона.",
-        correct: "Отказать приложению в доступах и направить жалобу в РКН на нарушение принципа целеполагания.",
-        distractors: ["Разрешить доступы для установки, а потом попытаться их отключить в системных настройках.", "Скачать «взломанную» версию этого же приложения с пиратского торрент-форума."],
-        feedback: "Прямое нарушение ч. 5 ст. 5 ФЗ-152: собираемые данные должны строго соответствовать заявленным целям обработки. Фонарику технически не нужны контакты и микрофон. За избыточный сбор разработчику грозит ответственность за незаконный сбор данных."
+        "id": 6,
+        "action": "ЗАПРЕЩЕННАЯ СИМВОЛИКА: Установил на аватарку в публичном Telegram-канале картинку с радужным флагом (шесть полос), признанным атрибутикой запрещенного движения.",
+        "verdict": "СТАТЬЯ 20.3 КоАП РФ. Штраф 2 000 руб. Движение ЛГБТ признано экстремистским. Мотив публикации (шутка или поддержка) судом не учитывается, важен сам факт публичного экспонирования запрещенной символики."
       },
       {
-        id: 7, filterType: "БИОМЕТРИЯ", category: "ОТЗЫВ БИОМЕТРИИ (ЕБС)",
-        threat: "Студент решил глобально запретить государству и частным банкам распознавать свое лицо и голос, удалив их из системы.",
-        correct: "Обратиться лично в МФЦ с паспортом и СНИЛС для оформления письменного отказа от сбора биометрии в ЕБС.",
-        distractors: ["Писать заявления в каждый отдельный банк с требованием удалить биометрию с их серверов.", "Просто удалить свой профиль, сканы документов и фотографии в банковском приложении."],
-        feedback: "По ФЗ-572 коммерческие системы (банки) обязаны передавать биометрические образцы в государственную Единую биометрическую систему (ГИС ЕБС). Глобальный запрет оформляется через МФЦ или подтвержденную запись на Госуслугах. Данные в ЕБС блокируются и уничтожаются."
+        "id": 7,
+        "action": "ФЕЙКИ В ЧАТЕ: Переслал в беседу курса аудиосообщение о «тайном приказе» и скором начале массовой мобилизации студентов. Источник информации не проверил.",
+        "verdict": "СТАТЬЯ 13.15 КоАП РФ. Штраф 50 000 руб. Распространение фейков под видом достоверной информации. Действие создает угрозу паники. Чат в мессенджере расценивается судом как средство массовой коммуникации."
       },
       {
-        id: 8, filterType: "УТЕЧКИ", category: "ПУБЛИЧНЫЕ ДАННЫЕ",
-        threat: "Коммерческая компания (онлайн-школа) без спроса скопировала ваше селфи из открытого профиля соцсети и использует его для своей таргетированной рекламы.",
-        correct: "Направить официальную досудебную претензию с требованием удалить фото и выплатить денежную компенсацию.",
-        distractors: ["Написать гневный комментарий под рекламным постом компании с требованием немедленно удалить фото.", "Смириться, поверив отговорке компании: «Ваш профиль открыт для всех, значит, копировать можно»."],
-        feedback: "Открытый профиль не делает фото общественным достоянием. По ст. 10.1 ФЗ-152 для распространения ПДн необходимо специальное согласие. Использование изображения гражданина без разрешения нарушает ст. 152.1 ГК РФ и дает право на компенсацию морального вреда."
+        "id": 8,
+        "action": "ЛОГОТИПЫ НА ВИЗИТКЕ: Индивидуальный предприниматель разместил логотипы Instagram и Facebook на печатных визитках и вывеске своего салона красоты.",
+        "verdict": "СТАТЬЯ 20.3 КоАП РФ. Штраф 50 000 руб. и уничтожение полиграфии. Компания Meta признана экстремистской. Её логотипы приравнены к запрещенной символике. Публичная демонстрация влечет арест или штраф."
       },
       {
-        id: 9, filterType: "ПДН", category: "СПАМ И МФО",
-        threat: "При оформлении скидочной карты в магазине клиент не глядя подписал согласие «на рассылку партнерам». Начался шквал спам-звонков от микрозаймов.",
-        correct: "Взять у сотового оператора детализацию звонков и подать официальную жалобу на спамеров в ФАС России.",
-        distractors: ["Ежедневно ругаться с операторами колл-центра микрозаймов, требуя стереть номер из базы.", "Пойти в салон связи и полностью сменить свою сим-карту и номер телефона."],
-        feedback: "Абстрактное согласие «на партнеров» с предустановленными чекбоксами недействительно. По ст. 18 ФЗ «О рекламе» распространение рекламы без явного согласия запрещено. ФАС штрафует спамеров на суммы до 1 000 000 рублей по ч. 4.1 ст. 14.3 КоАП РФ."
+        "id": 9,
+        "action": "ИКОНКИ НА САЙТЕ: Разработчик добавил в подвал сайта кнопки-ссылки в виде логотипов Instagram и Facebook для перехода в профили компании.",
+        "verdict": "СТАТЬЯ 20.3 КоАП РФ. Административный арест 15 суток. Владелец сайта несет полную ответственность. Демонстрация логотипов экстремистской организации на ресурсе с открытым доступом образует состав нарушения."
       },
       {
-        id: 10, filterType: "ПДН", category: "УНИЧТОЖЕНИЕ ДАННЫХ",
-        threat: "Студент окончил платные курсы, сертификат получил, но онлайн-школа заявляет, что «обязана бессрочно хранить скан паспорта и договор для архива».",
-        correct: "Потребовать уничтожения данных, запросив официальный Акт и лог-выгрузку об удалении из ИТ-системы.",
-        distractors: ["Поверить менеджеру, так как учебные заведения всегда имеют строгие бумажные архивы.", "Потребовать от школы выдать простую бумажную справку или email-уведомление об удалении аккаунта."],
-        feedback: "По ч. 4 ст. 21 ФЗ-152 при достижении цели обработки данные подлежат уничтожению в течение 30 дней. Хранение скана паспорта без законных оснований запрещено. По Приказу РКН № 179 оператор обязан подтвердить факт удаления Актом и логом системы."
+        "id": 10,
+        "action": "ОПРАВДАНИЕ ТЕРРОРИЗМА: Оставил комментарий «Они всё сделали правильно, так им и надо» под новостным постом в Telegram о террористическом акте в торговом центре.",
+        "verdict": "СТАТЬЯ 205.2 УК РФ. Лишение свободы на 5 лет. Текст квалифицируется лингвистической экспертизой как публичное заявление о признании идеологии терроризма правильной. Состав преступления окончен в момент отправки."
+      },
+      {
+        "id": 11,
+        "action": "ДИСКРЕДИТАЦИЯ В СТАТУСЕ: Установил в статус WhatsApp, видимый списку контактов, лозунг, негативно оценивающий использование Вооруженных Сил РФ.",
+        "verdict": "СТАТЬЯ 20.3.3 КоАП РФ. Штраф 40 000 руб. с конфискацией смартфона. Статус в мессенджере доступен 3-м лицам (публичность). Текст направлен на подрыв авторитета ВС РФ. Телефон изымается как орудие правонарушения."
+      },
+      {
+        "id": 12,
+        "action": "УГОЛОВНАЯ ДИСКРЕДИТАЦИЯ: Написал пост с критикой действий армии РФ в VK через 8 месяцев после уплаты штрафа по КоАП РФ за аналогичный комментарий.",
+        "verdict": "СТАТЬЯ 280.3 УК РФ. Штраф 200 000 руб. или колония. Сработал механизм преюдиции: повторное совершение публичных действий, направленных на дискредитацию ВС РФ, в течение 1 года образует состав УГОЛОВНОГО преступления."
+      },
+      {
+        "id": 13,
+        "action": "РЕПОСТ ИНОАГЕНТА: Администратор городского паблика репостнул видеоролик известного журналиста-иноагента, забыв разместить перед текстом обязательную плашку из 24 слов.",
+        "verdict": "СТАТЬЯ 19.34 КоАП РФ. Штраф 40 000 руб. Закон обязывает всех граждан маркировать материалы иноагентов при их распространении. При повторном нарушении административный штраф превратится в уголовное дело."
+      },
+      {
+        "id": 14,
+        "action": "РЕКЛАМА У ИНОАГЕНТА: Директор онлайн-школы заказал и оплатил рекламную интеграцию своих образовательных курсов на YouTube-канале блогера, признанного иностранным агентом.",
+        "verdict": "СТАТЬЯ 14.3 КоАП РФ. Штраф 300 000 руб. на юридическое лицо (заказчика). Законодательство категорически запрещает российским гражданам и бизнесу размещать ЛЮБУЮ рекламу на ресурсах иностранных агентов."
+      },
+      {
+        "id": 15,
+        "action": "ПОКУПКА СИНЕЙ ГАЛОЧКИ: Владелец личного блога оплатил подписку «Meta Verified» для получения синей галочки в Instagram, использовав карту зарубежного банка.",
+        "verdict": "СТАТЬЯ 282.3 УК РФ. Лишение свободы до 8 лет. Суд расценивает оплату платных услуг внутри платформы как заведомое ФИНАНСИРОВАНИЕ экстремистской организации, чья деятельность запрещена в РФ."
+      },
+      {
+        "id": 16,
+        "action": "ТАРГЕТ В INSTAGRAM: Предприниматель настроил таргетированную рекламу в Facebook для показа пользователям из Европы. Деньги списывались с привязанной иностранной карты.",
+        "verdict": "СТАТЬЯ 282.3 УК РФ. Штраф 500 000 руб. или тюрьма. Коммерческая цель рекламодателя не имеет значения. Оплата услуг рекламного кабинета расценивается как прямое финансовое обеспечение деятельности экстремистской организации."
+      },
+      {
+        "id": 17,
+        "action": "ДОНАТ В ЗАПРЕЩЕННЫЙ ФОНД: Сделал пожертвование в размере 500 рублей через банковское приложение в Фонд борьбы с коррупцией в сентябре 2021 года (после запрета организации).",
+        "verdict": "СТАТЬЯ 282.3 УК РФ. Принудительные работы на 3 года. Переводы, совершенные после 5 августа 2021 года (дата вступления решения суда в силу), образуют оконченный состав финансирования экстремистской деятельности."
+      },
+      {
+        "id": 18,
+        "action": "РАЗЖИГАНИЕ В ЧАТЕ ДОМА: В чате микрорайона призвал выселять представителей определенной национальности, используя агрессивные и оскорбительные эпитеты.",
+        "verdict": "СТАТЬЯ 20.3.1 КоАП РФ. Арест 10 суток. Высказывания в групповом чате образуют публичные действия, направленные на возбуждение межнациональной вражды. Эксперт-лингвист докажет умысел в суде."
+      },
+      {
+        "id": 19,
+        "action": "ОТСУТСТВИЕ ПОМЕТКИ О META: Журналист или блогер опубликовал новость с цитатой бизнесмена из Facebook, но забыл указать в сноске, что соцсеть принадлежит экстремистской организации.",
+        "verdict": "СТАТЬЯ 13.15 КоАП РФ. Штраф 40 000 руб. Злоупотребление свободой информации. Распространение сведений об экстремистской организации без обязательного указания на то, что ее деятельность запрещена в РФ, строго наказуемо."
+      },
+      {
+        "id": 20,
+        "action": "ФЕЙК ОБ АРМИИ: Переслал в группу коллег видео со смонтированными кадрами разрушений, подписав: «Смотрите, что наши войска натворили вчера».",
+        "verdict": "СТАТЬЯ 207.3 УК РФ. Лишение свободы на 3 года. Публичное распространение под видом достоверных сообщений заведомо ложной информации об использовании ВС РФ. Чат коллег признан публичным пространством."
       }
     ];
 
-    let resolvedCases = new Set();
-    let lives = 6;
-    let totalMistakes = 0;
-    let totalFails = 0;
-
-    let currentFilter = "Все";
-    let activeIncidentId = null;
-    let isModalAnimating = false;
+    let deck = [];
+    const totalCasesCount = rawDatabase.length;
+    let learnedCount = 0;
+    let repeatsTotal = 0;
+    let activeCardContext = null;
 
     let timerInterval = null;
     let elapsedSeconds = 0;
     let isTimerPaused = false;
+    let toastTimer = null;
 
     let audioCtx = null;
     function initAudio() {
       try {
-        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-        if (AudioContextClass && !audioCtx) audioCtx = new AudioContextClass();
-        if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+        const AudioClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioClass && !audioCtx) {
+          audioCtx = new AudioClass();
+        }
+        if (audioCtx && audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
       } catch (e) {}
     }
 
@@ -512,45 +1250,56 @@
       if (!audioCtx) return;
       try {
         const now = audioCtx.currentTime;
-        if (type === 'success') {
-          const freqs = [523.25, 659.25, 783.99];
-          freqs.forEach((freq, i) => {
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(freq, now + i * 0.05);
-            gain.gain.setValueAtTime(0.08, now + i * 0.05);
-            gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.05 + 0.3);
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start(now + i * 0.05);
-            osc.stop(now + i * 0.05 + 0.35);
-          });
-        } else if (type === 'error') {
+        if (type === 'flip') {
           const osc = audioCtx.createOscillator();
           const gain = audioCtx.createGain();
-          osc.type = 'sawtooth';
-          osc.frequency.setValueAtTime(140, now);
-          osc.frequency.linearRampToValueAtTime(80, now + 0.3);
-          gain.gain.setValueAtTime(0.15, now);
-          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.3);
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(320, now);
+          osc.frequency.exponentialRampToValueAtTime(560, now + 0.12);
+          gain.gain.setValueAtTime(0.06, now);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.14);
           osc.connect(gain);
           gain.connect(audioCtx.destination);
           osc.start(now);
-          osc.stop(now + 0.35);
-        } else if (type === 'fanfare') {
-          const chord = [523.25, 659.25, 783.99, 1046.50];
-          chord.forEach((freq, i) => {
+          osc.stop(now + 0.15);
+        } else if (type === 'success') {
+          const freqs = [523.25, 659.25, 783.99];
+          freqs.forEach((f, idx) => {
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(freq, now + i * 0.08);
-            gain.gain.setValueAtTime(0.12, now + i * 0.08);
-            gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.08 + 0.7);
+            osc.frequency.setValueAtTime(f, now + idx * 0.05);
+            gain.gain.setValueAtTime(0.08, now + idx * 0.05);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.05 + 0.3);
             osc.connect(gain);
             gain.connect(audioCtx.destination);
-            osc.start(now + i * 0.08);
-            osc.stop(now + i * 0.08 + 0.75);
+            osc.start(now + idx * 0.05);
+            osc.stop(now + idx * 0.05 + 0.32);
+          });
+        } else if (type === 'repeat') {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(260, now);
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.2);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.21);
+        } else if (type === 'fanfare') {
+          const chord = [523.25, 659.25, 783.99, 1046.50, 1318.51];
+          chord.forEach((f, idx) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(f, now + idx * 0.08);
+            gain.gain.setValueAtTime(0.12, now + idx * 0.08);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.08 + 0.75);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now + idx * 0.08);
+            osc.stop(now + idx * 0.08 + 0.78);
           });
         }
       } catch (err) {}
@@ -563,7 +1312,7 @@
     }
 
     function startTimer() {
-      if (timerInterval) clearInterval(timerInterval);
+      if (timerInterval) return;
       timerInterval = setInterval(() => {
         if (!isTimerPaused) {
           elapsedSeconds++;
@@ -571,386 +1320,725 @@
         }
       }, 1000);
     }
-    function pauseTimer() { isTimerPaused = true; }
-    function resumeTimer() { isTimerPaused = false; }
+
     function stopTimer() {
       clearInterval(timerInterval);
       timerInterval = null;
     }
 
-    function addPenalty() {
-      elapsedSeconds += 30;
-      document.getElementById('timer-display').textContent = formatTime(elapsedSeconds);
-      const flash = document.getElementById('penalty-flash');
-      flash.classList.add('show');
-      setTimeout(() => flash.classList.remove('show'), 1200);
-    }
-
-    function updateHeaderUI() {
-      document.getElementById('progress-text').textContent = `Зачищено угроз: ${resolvedCases.size}/10`;
-      const shields = document.querySelectorAll('#lives-container .life-shield');
-      shields.forEach((shield, idx) => {
-        if (idx < lives) shield.classList.remove('lost');
-        else shield.classList.add('lost');
-      });
-    }
-
-    function renderGrid() {
-      const grid = document.getElementById('grid-container');
-      grid.innerHTML = '';
-
-      dbRaw.forEach(item => {
-        if (currentFilter !== "Все" && item.filterType !== currentFilter) return;
-
-        const isRes = resolvedCases.has(item.id);
-        const card = document.createElement('div');
-        card.className = `incident-card ${isRes ? 'resolved' : ''}`;
-        card.innerHTML = `
-          <div class="inc-header">
-            <span class="inc-status ${isRes ? 'resolved' : ''}">
-              <span class="status-dot"></span> ${isRes ? '[ НЕЙТРАЛИЗОВАНО ]' : '[ УЯЗВИМОСТЬ ]'}
-            </span>
-            <span class="inc-category">${item.category}</span>
-          </div>
-          <div class="inc-title">${item.threat}</div>
-        `;
-
-        if (!isRes) {
-          card.addEventListener('click', () => openIncidentModal(item.id));
+    function requestFullScreenSafe() {
+      try {
+        const el = document.documentElement;
+        if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+          if (el.requestFullscreen) {
+            el.requestFullscreen().catch(() => {});
+          } else if (el.webkitRequestFullscreen) {
+            el.webkitRequestFullscreen();
+          }
         }
-        grid.appendChild(card);
-      });
+      } catch (e) {}
     }
 
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        e.target.classList.add('active');
-        currentFilter = e.target.getAttribute('data-filter');
-        renderGrid();
-      });
-    });
-
-    function openIncidentModal(id) {
-      if (isModalAnimating) return;
-      activeIncidentId = id;
-      const item = dbRaw.find(x => x.id === id);
-
-      document.getElementById('modal-icon').className = 'dialog-icon';
-      document.getElementById('modal-icon').innerHTML = '<svg><use href="#icon-hazard"></use></svg>';
-      document.getElementById('modal-title').textContent = 'АНАЛИЗ ИНЦИДЕНТА';
-      document.getElementById('modal-title').style.color = '#f8fafc';
-      document.getElementById('modal-category').textContent = item.category;
-      document.getElementById('modal-threat').textContent = item.threat;
-      document.getElementById('modal-threat').style.borderColor = 'var(--alert-red)';
-
-      document.getElementById('modal-feedback').classList.remove('visible');
-      document.getElementById('modal-footer').classList.remove('visible');
-
-      const actionsBox = document.getElementById('modal-actions');
-      actionsBox.innerHTML = '';
-      actionsBox.style.display = 'flex';
-
-      let btns = [
-        { text: item.correct, isCorrect: true },
-        { text: item.distractors[0], isCorrect: false },
-        { text: item.distractors[1], isCorrect: false }
-      ];
-      btns.sort(() => Math.random() - 0.5);
-
-      btns.forEach(b => {
-        const btn = document.createElement('div');
-        btn.className = 'action-btn';
-        btn.innerHTML = `<div class="check-ring"><svg><use href="#icon-check"></use></svg></div><div>${b.text}</div>`;
-        btn.addEventListener('click', () => handleActionClick(btn, b.isCorrect, item));
-        actionsBox.appendChild(btn);
-      });
-
-      pauseTimer();
-      document.getElementById('modal-incident').classList.add('visible');
+    function toggleFullScreen() {
+      try {
+        if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+          requestFullScreenSafe();
+        } else {
+          if (document.exitFullscreen) {
+            document.exitFullscreen().catch(() => {});
+          } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+          }
+        }
+      } catch (e) {}
     }
 
-    function handleActionClick(clickedBtn, isCorrect, item) {
-      if (isModalAnimating) return;
-      isModalAnimating = true;
+    function updateFullscreenIcon() {
+      const isFull = !!(document.fullscreenElement || document.webkitFullscreenElement);
+      const iconUse = document.getElementById('icon-fs-use');
+      if (iconUse) {
+        iconUse.setAttribute('href', isFull ? '#icon-minimize' : '#icon-maximize');
+      }
+    }
+    document.addEventListener('fullscreenchange', updateFullscreenIcon);
+    document.addEventListener('webkitfullscreenchange', updateFullscreenIcon);
 
-      const actionsBox = document.getElementById('modal-actions');
-      const allBtns = actionsBox.querySelectorAll('.action-btn');
+    document.addEventListener('touchmove', (e) => {
+      if (!e.target.closest('.card-content') && !e.target.closest('.finish-card')) {
+        e.preventDefault();
+      }
+    }, { passive: false });
 
-      if (isCorrect) {
-        playSound('success');
-        if (navigator.vibrate) navigator.vibrate(30);
+    function showLockedToast() {
+      const toast = document.getElementById('locked-toast');
+      if (!toast) return;
+      toast.classList.add('show');
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2000);
+    }
 
-        allBtns.forEach(b => {
-          if (b !== clickedBtn) b.style.display = 'none';
-        });
-        clickedBtn.classList.add('correct');
-        clickedBtn.style.cursor = 'default';
+    function updateHUD() {
+      document.getElementById('hud-learned-count').textContent = learnedCount;
+      document.getElementById('hud-deck-remains').textContent = `В колоде: ${deck.length} дел`;
+    }
 
-        document.getElementById('modal-icon').className = 'dialog-icon success';
-        document.getElementById('modal-icon').innerHTML = '<svg><use href="#icon-shield"></use></svg>';
-        document.getElementById('modal-title').textContent = 'УГРОЗА НЕЙТРАЛИЗОВАНА';
-        document.getElementById('modal-title').style.color = 'var(--safe-green)';
-        document.getElementById('modal-threat').style.borderColor = 'var(--safe-green)';
+    function formatActionHTML(action) {
+      const match = action.match(/^([^:]+:)\s*(.*)$/);
+      if (match) {
+        return `<div class="card-title-heading">${match[1]}</div><div class="card-desc-text">${match[2]}</div>`;
+      }
+      return `<div class="card-desc-text">${action}</div>`;
+    }
 
-        resolvedCases.add(item.id);
+    function formatVerdictHTML(verdict) {
+      const match = verdict.match(/^(СТАТЬЯ\s+[\d\.]+\s+(?:УК|КоАП)\s+РФ)[\.\:]?\s*(.*)$/i);
+      if (match) {
+        return `<div class="article-highlight-wrap"><span class="article-highlight">${match[1]}</span></div><div class="verdict-desc-text">${match[2]}</div>`;
+      }
+      return `<div class="verdict-desc-text">${verdict}</div>`;
+    }
+
+    function fitText(textElement, text, parentCard, isHTML = false) {
+      if (!textElement) return;
+      const measurer = document.getElementById('text-measurer');
+      if (isHTML) {
+        measurer.innerHTML = text;
       } else {
-        playSound('error');
-        if (navigator.vibrate) navigator.vibrate([60, 90]);
+        measurer.textContent = text;
+      }
+      
+      let fontSize = window.innerWidth > 600 ? 21 : 18;
+      
+      const cardRect = parentCard ? parentCard.getBoundingClientRect() : { 
+        width: Math.min(window.innerWidth * 0.88, 420), 
+        height: Math.min(window.innerHeight * 0.58, 480) 
+      };
+      
+      const maxW = Math.max(cardRect.width - 40, 200);
+      const maxH = Math.max(cardRect.height - 110, 180);
+      
+      measurer.style.width = maxW + 'px';
+      measurer.style.fontSize = fontSize + 'px';
+      
+      while ((measurer.scrollHeight > maxH || measurer.scrollWidth > maxW) && fontSize > 11.5) {
+        fontSize -= 0.5;
+        measurer.style.fontSize = fontSize + 'px';
+      }
+      
+      textElement.style.fontSize = fontSize + 'px';
+      if (isHTML) {
+        textElement.innerHTML = text;
+      } else {
+        textElement.textContent = text;
+      }
+    }
 
-        lives--;
-        totalMistakes++;
-        updateHeaderUI();
-        addPenalty();
+    function nextCard() {
+      const cardArea = document.getElementById('card-area');
+      cardArea.innerHTML = '';
+      activeCardContext = null;
 
-        const dialog = document.querySelector('#modal-incident .dialog-box');
-        dialog.style.animation = 'appShake 0.4s ease';
-        setTimeout(() => dialog.style.animation = '', 400);
-
-        allBtns.forEach(b => {
-          if (b !== clickedBtn) b.style.display = 'none';
-        });
-        clickedBtn.classList.add('wrong');
-        clickedBtn.style.cursor = 'default';
-
-        document.getElementById('modal-title').textContent = 'ОШИБКА АНАЛИТИКИ';
-        document.getElementById('modal-title').style.color = 'var(--alert-red)';
+      if (deck.length === 0) {
+        document.getElementById('empty-state').style.display = 'block';
+        document.getElementById('action-bottom-bar').style.display = 'none';
+        finishGame();
+        return;
       }
 
-      const fb = document.getElementById('modal-feedback');
-      fb.innerHTML = `<strong>${isCorrect ? 'АЛГОРИТМ ВЕРЕН' : 'СИСТЕМА УЯЗВИМА'}</strong><br><br>${item.feedback}`;
-      fb.classList.add('visible');
+      document.getElementById('empty-state').style.display = 'none';
+      document.getElementById('action-bottom-bar').style.display = 'flex';
 
-      const btnClose = document.getElementById('btn-close-incident');
-      btnClose.textContent = isCorrect ? 'ЗАКРЫТЬ ДЕЛО' : 'ПОНЯТЬ И ПРОДОЛЖИТЬ';
-      document.getElementById('modal-footer').classList.add('visible');
+      const item = deck[0];
+      const cardWrapper = document.createElement('div');
+      cardWrapper.className = 'card-wrapper';
+      cardWrapper.id = 'active-card';
 
-      isModalAnimating = false;
+      cardWrapper.innerHTML = `
+        <div class="card-inner">
+          <!-- FRONT FACE -->
+          <div class="card-face card-front">
+            <div class="badge-stamp badge-repeat">Повторить</div>
+            <div class="badge-stamp badge-learned">Усвоил</div>
+            <div class="card-header-bar">
+              <div class="side-tag">
+                <svg><use href="#icon-lightning"></use></svg>
+                <span>ДЕЙСТВИЕ В СЕТИ</span>
+              </div>
+              <span class="side-step-indicator">ДЕЛО ${item.id} ИЗ ${totalCasesCount}</span>
+            </div>
+            <div class="card-content">
+              <div class="card-text" id="front-text"></div>
+            </div>
+            <div class="card-footer-bar">
+              <svg><use href="#icon-flip"></use></svg>
+              <span>Тапните, чтобы узнать вердикт</span>
+            </div>
+          </div>
+
+          <!-- BACK FACE -->
+          <div class="card-face card-back">
+            <div class="badge-stamp badge-repeat">Повторить</div>
+            <div class="badge-stamp badge-learned">Усвоил</div>
+            <div class="card-header-bar">
+              <div class="side-tag">
+                <svg><use href="#icon-scales"></use></svg>
+                <span>ВЕРДИКТ СУДА</span>
+              </div>
+              <span class="side-step-indicator" style="color: #fca5a5;">ПРАВОВАЯ КВАЛИФИКАЦИЯ</span>
+            </div>
+            <div class="card-content">
+              <div class="card-text" id="back-text"></div>
+            </div>
+            <div class="card-footer-bar">
+              <span>← Свайп: Повторить</span>
+              <span style="color:#34d399;">Усвоил: Свайп →</span>
+            </div>
+          </div>
+        </div>
+      `;
+
+      cardArea.appendChild(cardWrapper);
+
+      const frontEl = cardWrapper.querySelector('#front-text');
+      const backEl = cardWrapper.querySelector('#back-text');
+
+      fitText(frontEl, formatActionHTML(item.action), cardWrapper, true);
+      fitText(backEl, formatVerdictHTML(item.verdict), cardWrapper, true);
+
+      initCardPhysics(cardWrapper, item);
     }
 
-    document.getElementById('btn-close-incident').addEventListener('click', () => {
-      document.getElementById('modal-incident').classList.remove('visible');
-      updateHeaderUI();
-      renderGrid();
+    function initCardPhysics(card, itemData) {
+      if (!card || !itemData) return;
+      let isSwiping = false;
+      let swipeTimeout = null;
 
-      if (lives <= 0) {
-        stopTimer();
-        setTimeout(() => {
-          document.getElementById('modal-gameover').classList.add('visible');
-          totalFails++;
-        }, 300);
-      } else if (resolvedCases.size === 10) {
-        setTimeout(finishGame, 300);
-      } else {
-        resumeTimer();
+      const badgesLearned = card.querySelectorAll('.badge-learned');
+      const badgesRepeat = card.querySelectorAll('.badge-repeat');
+      const btnRepeat = document.getElementById('btn-action-repeat');
+      const btnLearned = document.getElementById('btn-action-learned');
+
+      function updateActionButtons() {
+        const isFlipped = card.classList.contains('flipped');
+        if (isFlipped) {
+          btnRepeat.classList.remove('disabled-swipe-lock');
+          btnLearned.classList.remove('disabled-swipe-lock');
+        } else {
+          btnRepeat.classList.add('disabled-swipe-lock');
+          btnLearned.classList.add('disabled-swipe-lock');
+        }
       }
+
+      function setBadgesOpacity(dx) {
+        const isFlipped = card.classList.contains('flipped');
+        if (!isFlipped) {
+          badgesLearned.forEach(b => b.style.opacity = 0);
+          badgesRepeat.forEach(b => b.style.opacity = 0);
+          return;
+        }
+        const learnedOp = dx > 20 ? Math.min(dx / 85, 1) : 0;
+        const repeatOp = dx < -20 ? Math.min(Math.abs(dx) / 85, 1) : 0;
+        badgesLearned.forEach(b => b.style.opacity = learnedOp);
+        badgesRepeat.forEach(b => b.style.opacity = repeatOp);
+      }
+
+      function triggerFlip() {
+        if (isSwiping) return;
+        playSound('flip');
+        if (navigator.vibrate) navigator.vibrate(25);
+        card.classList.toggle('flipped');
+        updateActionButtons();
+      }
+
+      function triggerLockedWarning() {
+        card.classList.add('wobble-locked');
+        setTimeout(() => card.classList.remove('wobble-locked'), 420);
+        showLockedToast();
+        playSound('repeat');
+        if (navigator.vibrate) navigator.vibrate([40, 80]);
+      }
+
+      function swipeOut(direction) {
+        if (isSwiping) return;
+        isSwiping = true;
+        activeCardContext = null;
+
+        const moveX = direction * (window.innerWidth + 240);
+        card.style.transition = 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)';
+        card.style.transform = `translate(${moveX}px, 0) rotate(${direction * 20}deg)`;
+
+        if (direction > 0) {
+          playSound('success');
+          if (navigator.vibrate) navigator.vibrate(30);
+          learnedCount++;
+        } else {
+          playSound('repeat');
+          if (navigator.vibrate) navigator.vibrate([40, 80]);
+          repeatsTotal++;
+        }
+
+        swipeTimeout = setTimeout(() => {
+          if (card.parentNode) {
+            card.remove();
+          }
+
+          const idx = deck.indexOf(itemData);
+          if (idx !== -1) {
+            deck.splice(idx, 1);
+          }
+
+          if (direction < 0) {
+            // Mastery Learning: карточка возвращается в конец колоды
+            deck.push(itemData);
+          }
+
+          updateHUD();
+          nextCard();
+        }, 280);
+      }
+
+      activeCardContext = {
+        triggerSwipe: (direction) => {
+          if (isSwiping) return;
+          if (!card.classList.contains('flipped')) {
+            triggerLockedWarning();
+            return;
+          }
+          setBadgesOpacity(direction * 100);
+          swipeOut(direction);
+        },
+        triggerFlip: triggerFlip,
+        removeCard: () => {
+          isSwiping = true;
+          if (swipeTimeout) clearTimeout(swipeTimeout);
+          if (card.parentNode) card.remove();
+        }
+      };
+
+      const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+
+      if (isTouchDevice) {
+        let isDragging = false;
+        let hasMoved = false;
+        let isScrolling = false;
+        let startX = 0, startY = 0;
+
+        card.addEventListener('touchstart', (e) => {
+          if (isSwiping) return;
+          isDragging = true;
+          hasMoved = false;
+          isScrolling = false;
+          startX = e.touches[0].clientX;
+          startY = e.touches[0].clientY;
+          card.style.transition = 'none';
+        }, { passive: true });
+
+        card.addEventListener('touchmove', (e) => {
+          if (!isDragging || isSwiping) return;
+          const dx = e.touches[0].clientX - startX;
+          const dy = e.touches[0].clientY - startY;
+
+          if (!hasMoved && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) {
+            hasMoved = true;
+            if (Math.abs(dy) > Math.abs(dx)) {
+              isScrolling = true;
+            }
+          }
+
+          if (isScrolling) return;
+
+          if (!card.classList.contains('flipped')) {
+            return; // Запрет свайпа до переворота
+          }
+
+          if (e.cancelable) e.preventDefault();
+          card.style.transform = `translate(${dx}px, ${dy * 0.4}px) rotate(${dx * 0.05}deg)`;
+          setBadgesOpacity(dx);
+        }, { passive: false });
+
+        card.addEventListener('touchend', (e) => {
+          if (!isDragging || isSwiping) return;
+          isDragging = false;
+
+          if (!hasMoved && !isScrolling) {
+            triggerFlip();
+            card.style.transition = 'transform 0.4s ease';
+            card.style.transform = '';
+            return;
+          }
+
+          if (isScrolling) {
+            card.style.transition = 'transform 0.4s ease';
+            card.style.transform = '';
+            return;
+          }
+
+          if (!card.classList.contains('flipped')) {
+            card.style.transition = 'transform 0.3s ease';
+            card.style.transform = '';
+            triggerLockedWarning();
+            return;
+          }
+
+          const dx = e.changedTouches[0].clientX - startX;
+          const threshold = Math.min(window.innerWidth * 0.25, 75);
+
+          if (dx > threshold) swipeOut(1);
+          else if (dx < -threshold) swipeOut(-1);
+          else {
+            card.style.transition = 'transform 0.35s ease';
+            card.style.transform = '';
+            setBadgesOpacity(0);
+          }
+        });
+
+      } else {
+        let isDragging = false;
+        let hasMoved = false;
+        let startX = 0, startY = 0;
+
+        const onMouseDown = (e) => {
+          if (isSwiping || e.button !== 0) return;
+          isDragging = true;
+          hasMoved = false;
+          startX = e.clientX;
+          startY = e.clientY;
+          card.style.transition = 'none';
+        };
+
+        const onMouseMove = (e) => {
+          if (!isDragging || isSwiping) return;
+          const dx = e.clientX - startX;
+          const dy = e.clientY - startY;
+
+          if (!hasMoved && (Math.abs(dx) > 5 || Math.abs(dy) > 5)) {
+            hasMoved = true;
+          }
+
+          if (!card.classList.contains('flipped')) {
+            return;
+          }
+
+          if (hasMoved) {
+            e.preventDefault();
+            card.style.transform = `translate(${dx}px, ${dy * 0.35}px) rotate(${dx * 0.05}deg)`;
+            setBadgesOpacity(dx);
+          }
+        };
+
+        const onMouseUp = (e) => {
+          if (!isDragging || isSwiping) return;
+          isDragging = false;
+
+          if (!hasMoved) {
+            triggerFlip();
+            card.style.transition = 'transform 0.4s ease';
+            card.style.transform = '';
+            return;
+          }
+
+          if (!card.classList.contains('flipped')) {
+            card.style.transition = 'transform 0.3s ease';
+            card.style.transform = '';
+            triggerLockedWarning();
+            return;
+          }
+
+          const dx = e.clientX - startX;
+          const threshold = 75;
+
+          if (dx > threshold) swipeOut(1);
+          else if (dx < -threshold) swipeOut(-1);
+          else {
+            card.style.transition = 'transform 0.35s ease';
+            card.style.transform = '';
+            setBadgesOpacity(0);
+          }
+        };
+
+        card.addEventListener('mousedown', onMouseDown);
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+      }
+
+      updateActionButtons();
+    }
+
+    document.getElementById('btn-action-flip').addEventListener('click', () => {
+      if (activeCardContext) activeCardContext.triggerFlip();
     });
 
-    document.getElementById('btn-retry-all').addEventListener('click', () => {
-      document.getElementById('modal-gameover').classList.remove('visible');
-      startApp();
+    document.getElementById('btn-action-repeat').addEventListener('click', () => {
+      if (activeCardContext) activeCardContext.triggerSwipe(-1);
     });
+
+    document.getElementById('btn-action-learned').addEventListener('click', () => {
+      if (activeCardContext) activeCardContext.triggerSwipe(1);
+    });
+
+    document.getElementById('btn-fullscreen').addEventListener('click', toggleFullScreen);
 
     document.getElementById('btn-start').addEventListener('click', () => {
       initAudio();
-      try {
-        const el = document.documentElement;
-        if (el.requestFullscreen) {
-          el.requestFullscreen().catch(() => {});
-        } else if (el.webkitRequestFullscreen) {
-          el.webkitRequestFullscreen();
-        }
-      } catch(e) {}
-
+      requestFullScreenSafe();
       document.getElementById('splash').classList.add('hidden');
       setTimeout(() => {
         document.getElementById('splash').style.display = 'none';
         document.getElementById('app').classList.add('visible');
-        startApp();
+        startBrainRing();
       }, 350);
     });
 
-    function startApp() {
-      resolvedCases.clear();
-      lives = 6;
+    function startBrainRing() {
+      deck = [...rawDatabase].sort(() => Math.random() - 0.5);
+      learnedCount = 0;
+      repeatsTotal = 0;
       elapsedSeconds = 0;
       isTimerPaused = false;
       document.getElementById('timer-display').textContent = '00:00';
-      updateHeaderUI();
-      renderGrid();
+
+      updateHUD();
       startTimer();
+      nextCard();
     }
 
     function finishGame() {
       stopTimer();
       playSound('fanfare');
-      if (navigator.vibrate) navigator.vibrate([100, 50, 150]);
+      if (navigator.vibrate) navigator.vibrate([100, 60, 140]);
 
-      document.getElementById('stat-time').textContent = formatTime(elapsedSeconds);
-      document.getElementById('stat-mistakes').textContent = totalMistakes;
-      document.getElementById('stat-fails').textContent = totalFails;
+      document.getElementById('stat-final-time').textContent = formatTime(elapsedSeconds);
+      document.getElementById('stat-total-cases').textContent = `${totalCasesCount} из ${totalCasesCount} (100%)`;
+      document.getElementById('stat-repeats-count').textContent = repeatsTotal;
 
       document.getElementById('modal-finish').classList.add('visible');
     }
 
-    document.getElementById('btn-restart-win').addEventListener('click', () => {
+    document.getElementById('btn-restart-all').addEventListener('click', () => {
       document.getElementById('modal-finish').classList.remove('visible');
-      totalMistakes = 0;
-      totalFails = 0;
-      startApp();
+      startBrainRing();
     });
 
-    function isFullscreen() {
-      return !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
-    }
-
-    function updateFullscreenBtn() {
-      const icon = document.getElementById('fs-icon');
-      if (!icon) return;
-      if (isFullscreen()) {
-        icon.innerHTML = '<use href="#icon-fs-exit"></use>';
-      } else {
-        icon.innerHTML = '<use href="#icon-fs-enter"></use>';
-      }
-    }
-
-    function toggleFullscreen() {
-      if (!isFullscreen()) {
-        const el = document.documentElement;
-        const rfs = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen || el.msRequestFullscreen;
-        if (rfs) {
-          rfs.call(el).catch(() => {});
-        }
-      } else {
-        const efs = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
-        if (efs) {
-          efs.call(document).catch(() => {});
-        }
-      }
-    }
-
-    document.getElementById('btn-fullscreen-toggle').addEventListener('click', toggleFullscreen);
-    document.addEventListener('fullscreenchange', updateFullscreenBtn);
-    document.addEventListener('webkitfullscreenchange', updateFullscreenBtn);
-
-    // --- CANVAS CERTIFICATE GENERATOR ---
-    document.getElementById('btn-download-cert').addEventListener('click', () => {
+    function generateExpertCertificate() {
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
-      const width = 1080; const height = 1440;
-      canvas.width = width; canvas.height = height;
 
-      // Dark cyber gradient
+      const width = 1080;
+      const height = 1440;
+      canvas.width = width;
+      canvas.height = height;
+
       const bgGrad = ctx.createLinearGradient(0, 0, width, height);
-      bgGrad.addColorStop(0, '#060b14'); bgGrad.addColorStop(0.5, '#0f172a'); bgGrad.addColorStop(1, '#172339');
-      ctx.fillStyle = bgGrad; ctx.fillRect(0, 0, width, height);
+      bgGrad.addColorStop(0, '#080d1a');
+      bgGrad.addColorStop(0.5, '#0f172a');
+      bgGrad.addColorStop(1, '#1e111a');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, width, height);
 
-      // Grid lines
-      ctx.strokeStyle = 'rgba(14, 165, 233, 0.08)'; ctx.lineWidth = 1.5;
-      for (let i = 0; i < width; i += 60) { ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, height); ctx.stroke(); }
-      for (let j = 0; j < height; j += 60) { ctx.beginPath(); ctx.moveTo(0, j); ctx.lineTo(width, j); ctx.stroke(); }
+      ctx.strokeStyle = 'rgba(59, 130, 246, 0.08)';
+      ctx.lineWidth = 1.5;
+      for (let i = 0; i < width; i += 60) {
+        ctx.beginPath();
+        ctx.moveTo(i, 0);
+        ctx.lineTo(i, height);
+        ctx.stroke();
+      }
+      for (let j = 0; j < height; j += 60) {
+        ctx.beginPath();
+        ctx.moveTo(0, j);
+        ctx.lineTo(width, j);
+        ctx.stroke();
+      }
 
-      const cardX = 54; const cardY = 60; const cardW = 972; const cardH = 1320; const radius = 32;
+      const cardX = 54;
+      const cardY = 55;
+      const cardW = width - 108;
+      const cardH = height - 110;
+      const radius = 32;
 
-      ctx.save(); ctx.shadowColor = 'rgba(0, 0, 0, 0.8)'; ctx.shadowBlur = 45; ctx.shadowOffsetY = 22;
-      ctx.fillStyle = '#0f172a'; roundRect(ctx, cardX, cardY, cardW, cardH, radius, true, false); ctx.restore();
+      ctx.save();
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+      ctx.shadowBlur = 45;
+      ctx.shadowOffsetY = 22;
+      ctx.fillStyle = '#172339';
+      roundRect(ctx, cardX, cardY, cardW, cardH, radius, true, false);
+      ctx.restore();
 
-      ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 2.5;
+      ctx.strokeStyle = 'rgba(59, 130, 246, 0.35)';
+      ctx.lineWidth = 2.5;
       roundRect(ctx, cardX, cardY, cardW, cardH, radius, false, true);
 
-      // Top accent
       const topBarGrad = ctx.createLinearGradient(cardX, cardY, cardX + cardW, cardY);
-      topBarGrad.addColorStop(0, '#0284c7'); topBarGrad.addColorStop(0.5, '#38bdf8'); topBarGrad.addColorStop(1, '#10b981');
-      ctx.fillStyle = topBarGrad; roundRectTop(ctx, cardX, cardY, cardW, 14, radius);
+      topBarGrad.addColorStop(0, '#3b82f6');
+      topBarGrad.addColorStop(0.5, '#f87171');
+      topBarGrad.addColorStop(1, '#10b981');
+      ctx.fillStyle = topBarGrad;
+      roundRectTop(ctx, cardX, cardY, cardW, 14, radius);
 
-      // Shield badge
-      const badgeX = width / 2; const badgeY = 205; const badgeR = 52;
-      ctx.save(); ctx.shadowColor = 'rgba(16, 185, 129, 0.45)'; ctx.shadowBlur = 35;
-      ctx.fillStyle = '#10b981'; ctx.beginPath(); ctx.arc(badgeX, badgeY, badgeR, 0, Math.PI * 2); ctx.fill(); ctx.restore();
-      ctx.fillStyle = '#ffffff'; ctx.font = 'bold 44px system-ui, sans-serif'; ctx.textAlign = 'center';
-      ctx.fillText('🛡️', badgeX, badgeY + 16);
+      const badgeX = width / 2;
+      const badgeY = 180;
+      const badgeR = 48;
 
-      // Titles
-      ctx.textAlign = 'center'; ctx.fillStyle = '#38bdf8'; ctx.font = 'bold 22px system-ui, sans-serif';
-      ctx.fillText('СЕРТИФИКАТ ЦИФРОВОЙ БЕЗОПАСНОСТИ', width / 2, 305);
+      ctx.save();
+      ctx.shadowColor = 'rgba(59, 130, 246, 0.55)';
+      ctx.shadowBlur = 30;
+      ctx.fillStyle = '#2563eb';
+      ctx.beginPath();
+      ctx.arc(badgeX, badgeY, badgeR, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
 
-      ctx.fillStyle = '#f8fafc'; ctx.font = '900 40px system-ui, sans-serif';
-      ctx.fillText('СЕРТИФИЦИРОВАННЫЙ', width / 2, 365);
-      ctx.fillText('АРХИТЕКТОР ПРИВАТНОСТИ', width / 2, 420);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 44px system-ui, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('⚖️', badgeX, badgeY + 16);
 
-      ctx.fillStyle = '#94a3b8'; ctx.font = '600 21px system-ui, sans-serif';
-      ctx.fillText('Аудит уязвимостей цифрового профиля пройден на 100%', width / 2, 475);
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#38bdf8';
+      ctx.font = 'bold 22px system-ui, sans-serif';
+      ctx.fillText('СУДЕБНЫЙ ДИПЛОМ КВАЛИФИЦИРОВАННОГО ЭКСПЕРТА', width / 2, 270);
 
-      const pillW = 400; const pillH = 50; const pillX = width / 2 - pillW / 2; const pillY = 515;
-      ctx.fillStyle = '#10b981'; roundRect(ctx, pillX, pillY, pillW, pillH, 25, true, false);
-      ctx.fillStyle = '#ffffff'; ctx.font = 'bold 22px system-ui, sans-serif';
-      ctx.fillText('★ ПРОФИЛЬ ЗАЩИЩЕН ★', width / 2, pillY + 34);
+      ctx.fillStyle = '#f8fafc';
+      ctx.font = '900 42px system-ui, sans-serif';
+      ctx.fillText('БРЕЙН-РИНГ: ГРАНИЦЫ СЛОВА', width / 2, 330);
+      ctx.fillText('И СУДЕБНАЯ ПРАКТИКА', width / 2, 382);
 
-      // Stats Box
-      const boxX = 114; const boxY = 615; const boxW = 852; const boxH = 460;
-      ctx.fillStyle = '#060b14'; roundRect(ctx, boxX, boxY, boxW, boxH, 22, true, false);
-      ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 1.5; roundRect(ctx, boxX, boxY, boxW, boxH, 22, false, true);
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '600 20px system-ui, sans-serif';
+      ctx.fillText('Все прецеденты УК РФ и КоАП РФ успешно изучены и усвоены', width / 2, 430);
+
+      const pillW = 440;
+      const pillH = 50;
+      const pillX = width / 2 - pillW / 2;
+      const pillY = 470;
+      ctx.fillStyle = '#10b981';
+      roundRect(ctx, pillX, pillY, pillW, pillH, 25, true, false);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 22px system-ui, sans-serif';
+      ctx.fillText('★ 100% ПРАВОВАЯ ГРАМОТНОСТЬ ★', width / 2, pillY + 33);
+
+      const boxX = 114;
+      const boxY = 555;
+      const boxW = width - 228;
+      const boxH = 520;
+
+      ctx.fillStyle = '#0b1120';
+      roundRect(ctx, boxX, boxY, boxW, boxH, 22, true, false);
+      ctx.strokeStyle = 'rgba(59, 130, 246, 0.25)';
+      ctx.lineWidth = 1.5;
+      roundRect(ctx, boxX, boxY, boxW, boxH, 22, false, true);
 
       const stats = [
-        { label: '⏱ Время ликвидации угроз:', val: formatTime(elapsedSeconds), hl: true },
-        { label: '🛡 Нейтрализовано уязвимостей:', val: '10 из 10 (100%)', hl: false },
-        { label: '⚠️ Допущено ошибок:', val: `${totalMistakes}`, hl: false },
-        { label: '🔄 Провалов аудита:', val: `${totalFails}`, hl: false },
-        { label: '📅 Дата аудита:', val: new Date().toLocaleDateString('ru-RU'), hl: false }
+        { label: '⏱  Затраченное процессуальное время:', val: formatTime(elapsedSeconds), highlight: true },
+        { label: '⚖️  Усвоено судебных прецедентов:', val: `${totalCasesCount} из ${totalCasesCount} (100%)`, highlight: false },
+        { label: '🔄  Возвратов в колоду на повторение:', val: `${repeatsTotal}`, highlight: false },
+        { label: '🛡  Квалификационный статус:', val: 'LEGAL EXPERT', highlight: false },
+        { label: '📅  Дата и время прохождения аттестации:', val: new Date().toLocaleString('ru-RU'), highlight: false }
       ];
 
-      let rowY = 685;
+      let rowY = 635;
       stats.forEach((row, idx) => {
-        ctx.textAlign = 'left'; ctx.fillStyle = '#94a3b8'; ctx.font = '600 22px system-ui, sans-serif';
-        ctx.fillText(row.label, boxX + 40, rowY);
-        ctx.textAlign = 'right'; ctx.fillStyle = row.hl ? '#38bdf8' : '#f8fafc';
-        ctx.font = row.hl ? 'bold 28px system-ui, sans-serif' : '700 22px system-ui, sans-serif';
-        ctx.fillText(row.val, boxX + boxW - 40, rowY);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '600 21px system-ui, sans-serif';
+        ctx.fillText(row.label, boxX + 36, rowY);
+
+        ctx.textAlign = 'right';
+        ctx.fillStyle = row.highlight ? '#38bdf8' : '#f8fafc';
+        ctx.font = row.highlight ? 'bold 24px system-ui, sans-serif' : '700 21px system-ui, sans-serif';
+        ctx.fillText(row.val, boxX + boxW - 36, rowY);
 
         if (idx < stats.length - 1) {
-          ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 1.5; ctx.beginPath();
-          ctx.moveTo(boxX + 35, rowY + 34); ctx.lineTo(boxX + boxW - 35, rowY + 34); ctx.stroke();
+          ctx.strokeStyle = '#1e293b';
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(boxX + 32, rowY + 32);
+          ctx.lineTo(boxX + boxW - 32, rowY + 32);
+          ctx.stroke();
         }
+
         rowY += 86;
       });
 
-      // Bottom seal
-      const sealW = 490; const sealH = 46; const sealY = 1130; const sealX = width / 2 - sealW / 2;
-      ctx.fillStyle = 'rgba(14, 165, 233, 0.1)'; roundRect(ctx, sealX, sealY, sealW, sealH, 12, true, false);
-      ctx.strokeStyle = 'rgba(14, 165, 233, 0.3)'; roundRect(ctx, sealX, sealY, sealW, sealH, 12, false, true);
-      ctx.textAlign = 'center'; ctx.fillStyle = '#38bdf8'; ctx.font = '700 18px system-ui, sans-serif';
-      ctx.fillText('РЕЗУЛЬТАТ ЗАФИКСИРОВАН СИСТЕМОЙ LMS', width / 2, sealY + 29);
+      const sealW = 460;
+      const sealH = 46;
+      const sealX = width / 2 - sealW / 2;
+      const sealY = 1125;
+      ctx.fillStyle = 'rgba(59, 130, 246, 0.12)';
+      roundRect(ctx, sealX, sealY, sealW, sealH, 12, true, false);
+      ctx.strokeStyle = 'rgba(59, 130, 246, 0.4)';
+      ctx.lineWidth = 1.5;
+      roundRect(ctx, sealX, sealY, sealW, sealH, 12, false, true);
 
-      ctx.fillStyle = '#64748b'; ctx.font = '500 18px system-ui, sans-serif';
-      ctx.fillText('Интерактивный дашборд-симулятор защиты персональных данных', width / 2, 1240);
-      ctx.fillText('Формат Mastery Learning • Вертикальный сертификат 3:4', width / 2, 1272);
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#60a5fa';
+      ctx.font = '700 18px system-ui, sans-serif';
+      ctx.fillText('ВЕРИФИЦИРОВАНО: LEGAL EXPERT', width / 2, sealY + 29);
+
+      ctx.fillStyle = '#64748b';
+      ctx.font = '500 18px system-ui, sans-serif';
+      ctx.fillText('Интерактивный тренажер судебной практики по цифровому праву', width / 2, 1228);
+      ctx.fillText('Формат 3:4 • Автономный тренажер Skillspace LMS', width / 2, 1260);
 
       const link = document.createElement('a');
-      link.download = `Акт_Приватности_${formatTime(elapsedSeconds).replace(':', '-')}.png`;
+      link.download = `Диплом_Брейн_Ринг_Эксперт_${formatTime(elapsedSeconds).replace(':', '-')}.png`;
       link.href = canvas.toDataURL('image/png');
-      document.body.appendChild(link); link.click(); document.body.removeChild(link);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
 
       const btn = document.getElementById('btn-download-cert');
-      const originalText = btn.innerHTML;
-      btn.innerHTML = `<svg><use href="#icon-shield"></use></svg> АКТ УСПЕШНО СКАЧАН!`;
+      const origText = btn.innerHTML;
+      btn.innerHTML = `<svg><use href="#icon-gavel-legal"></use></svg> ДИПЛОМ СКАЧАН!`;
       btn.style.background = '#059669';
-      setTimeout(() => { btn.innerHTML = originalText; btn.style.background = ''; }, 2500);
-    });
+      setTimeout(() => {
+        btn.innerHTML = origText;
+        btn.style.background = '';
+      }, 2500);
+    }
 
     function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
-      ctx.beginPath(); ctx.moveTo(x + radius, y); ctx.lineTo(x + width - radius, y);
-      ctx.quadraticCurveTo(x + width, y, x + width, y + radius); ctx.lineTo(x + width, y + height - radius);
-      ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height); ctx.lineTo(x + radius, y + height);
-      ctx.quadraticCurveTo(x, y + height, x, y + height - radius); ctx.lineTo(x, y + radius);
-      ctx.quadraticCurveTo(x, y, x + radius, y); ctx.closePath();
-      if (fill) ctx.fill(); if (stroke) ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x + radius, y);
+      ctx.lineTo(x + width - radius, y);
+      ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+      ctx.lineTo(x + width, y + height - radius);
+      ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+      ctx.lineTo(x + radius, y + height);
+      ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+      ctx.lineTo(x, y + radius);
+      ctx.quadraticCurveTo(x, y, x + radius, y);
+      ctx.closePath();
+      if (fill) ctx.fill();
+      if (stroke) ctx.stroke();
     }
+
     function roundRectTop(ctx, x, y, width, height, radius) {
-      ctx.beginPath(); ctx.moveTo(x + radius, y); ctx.lineTo(x + width - radius, y);
-      ctx.quadraticCurveTo(x + width, y, x + width, y + radius); ctx.lineTo(x + width, y + height);
-      ctx.lineTo(x, y + height); ctx.lineTo(x, y + radius); ctx.quadraticCurveTo(x, y, x + radius, y);
-      ctx.closePath(); ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(x + radius, y);
+      ctx.lineTo(x + width - radius, y);
+      ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+      ctx.lineTo(x + width, y + height);
+      ctx.lineTo(x, y + height);
+      ctx.lineTo(x, y + radius);
+      ctx.quadraticCurveTo(x, y, x + radius, y);
+      ctx.closePath();
+      ctx.fill();
     }
+
+    document.getElementById('btn-download-cert').addEventListener('click', generateExpertCertificate);
+
+    window.addEventListener('resize', () => {
+      const frontEl = document.getElementById('front-text');
+      const backEl = document.getElementById('back-text');
+      const activeCard = document.getElementById('active-card');
+      if (frontEl && backEl && activeCard) {
+        fitText(frontEl, frontEl.innerHTML, activeCard, true);
+        fitText(backEl, backEl.innerHTML, activeCard, true);
+      }
+    });
   </script>
 </body>
 </html>
